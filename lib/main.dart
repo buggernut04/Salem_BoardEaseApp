@@ -6,7 +6,7 @@ import 'components/homepage.dart';
 void main() => runApp(const BoardEaseApp());
 
 class BoardEaseApp extends StatelessWidget {
-  const BoardEaseApp({super.key});
+  const BoardEaseApp({super.key });
 
   // This widget is the root of my application.
   @override

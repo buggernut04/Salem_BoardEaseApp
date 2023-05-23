@@ -1,3 +1,7 @@
+import 'package:boardease_application/auxiliary/recordbar.dart';
+import 'package:boardease_application/auxiliary/tenantcard.dart';
+import 'package:boardease_application/classes/paymentstatus.dart';
+import 'package:boardease_application/classes/tenant.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget    {
@@ -8,6 +12,19 @@ class MyHomePage extends StatefulWidget    {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  List<Tenant> tenants = [
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now())
+  ];
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,40 +42,29 @@ class _MyHomePageState extends State<MyHomePage> {
  Widget content(){
     return Column(
       children: [
-        Padding(
-        padding: EdgeInsets.fromLTRB(135.0, 50.0, 30.0, 30.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Text(
-                "15/15",
-                style: TextStyle(
-                color: Colors.indigoAccent,
-                fontWeight: FontWeight.bold,
-                fontSize: 50.0
-                ),
-             ),
-            ],
-          )
-        ),
-        Container(
-          padding: EdgeInsets.fromLTRB(100.0, 20.0, 100.0, 20.0),
-          //margin: EdgeInsets.all(10.0),
-          color: Colors.cyan,
+        Expanded(
+          flex: 1,
+          child: Center(
+          //padding: EdgeInsets.fromLTRB(40.0, 50.0, 40.0, 30.0),
           child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget> [
-                Text(
-                    "Name:"
+            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+                Expanded(
+                  flex: 1,
+                  child:Container(
+                      child: RecordBar(tenant: tenants)
+                  ),
                 ),
-                SizedBox(height: 0),
-                Text(
-                    "Payed"
+                SizedBox(height: 10.0),
+                Column(
+                  children: tenants.map((tenant) => TenantCard(tenant: tenant)).toList(),
                 ),
-              ]
+              ],
+            )
           ),
         ),
-      ]
+        ]
     );
   }
 }
