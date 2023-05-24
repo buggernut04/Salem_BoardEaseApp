@@ -13,10 +13,10 @@ class RecordBar extends StatelessWidget {
     return Container(
       child: Center(
           child: Container(
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: <Widget>[
               CircularProgressIndicator(
                   strokeWidth: 10,
                   backgroundColor: Colors.yellow,

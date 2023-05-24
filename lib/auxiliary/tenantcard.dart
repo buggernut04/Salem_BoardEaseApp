@@ -1,3 +1,4 @@
+import 'package:boardease_application/classes/paymentstatus.dart';
 import 'package:flutter/material.dart';
 
 import '../classes/tenant.dart';
@@ -8,32 +9,19 @@ class TenantCard extends StatelessWidget {
   final Tenant tenant;
 
   @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.fromLTRB(10.0, 5.0, 10.0,5.0),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Text(
-              tenant.name,
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.grey[600],
-              )
-            ),
-            SizedBox(height: 5.0),
-            Text(
-                "Not Payed",
+  Widget build(BuildContext context) => Padding(
+      padding: const EdgeInsets.all(1.0),
+      child: Card(
+        margin: EdgeInsets.fromLTRB(10.0, 20.0, 10.0,1.0),
+        child: ListTile(
+          onTap: () {},
+          title: Text( tenant.name,
                 style: TextStyle(
                   fontSize: 18.0,
                   color: Colors.grey[600],
                 )
-            ),
-          ],
+              ),
+          )
         )
-      )
-    );
-  }
+      );
 }
