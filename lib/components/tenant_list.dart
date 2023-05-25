@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 import '../classes/tenant.dart';
 
 class TenantList extends StatefulWidget {
-  const TenantList({Key? key, required this.tenant}) : super(key: key);
-
-  final List<Tenant> tenant;
+  const TenantList({Key? key}) : super(key: key);
 
   @override
   State<TenantList> createState() => _TenantListState();
@@ -14,14 +12,22 @@ class TenantList extends StatefulWidget {
 
 class _TenantListState extends State<TenantList> {
 
+  List<Tenant> tenant = [
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978621212', email: 'grrrr', status: PaymentStatus.notFullyPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09438601212', email: 'grrrr', status: PaymentStatus.fullyPayed, startDate: DateTime.now())
+  ];
+
   String toPrint(int index){
-    if(widget.tenant[index].status == PaymentStatus.fullyPayed) {
-      return "${widget.tenant[index].name}\nFully Payed";
+    if(tenant[index].status == PaymentStatus.fullyPayed) {
+      return "${tenant[index].name}\nFully Payed";
     }
-    else if(widget.tenant[index].status == PaymentStatus.notFullyPayed) {
-      return "${widget.tenant[index].name}\nNot Fully Payed";
+    else if(tenant[index].status == PaymentStatus.notFullyPayed) {
+      return "${tenant[index].name}\nNot Fully Payed";
     }
-    return "${widget.tenant[index].name}\nNot Payed";
+    return "${tenant[index].name}\nNot Payed";
   }
 
   @override
@@ -51,11 +57,11 @@ class _TenantListState extends State<TenantList> {
                           )
                         );
                     },
-                    childCount: widget.tenant.length,
+                    childCount: tenant.length,
                 )
             )
           ],
         )
-    );;
+    );
   }
 }
