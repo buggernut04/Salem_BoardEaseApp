@@ -53,9 +53,9 @@ class _SplashScreenState extends State<SplashScreen> {
             SizedBox(height: 0),
             FutureBuilder(
                 builder: (BuildContext context, AsyncSnapshot snapshot){
-                  if(snapshot.connectionState == ConnectionState.waiting)
+                  if(snapshot.connectionState == ConnectionState.waiting) {
                     return Container();
-                  else{
+                  } else{
                     return ShaderMask(
                         blendMode: BlendMode.srcIn,
                         shaderCallback: (Rect bounds){

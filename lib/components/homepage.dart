@@ -1,7 +1,5 @@
-import 'package:boardease_application/auxiliary/bottom_navbar.dart';
-import 'package:boardease_application/components/payment_analysis.dart';
-import 'package:boardease_application/components/profile.dart';
-import 'package:boardease_application/components/tenant_list.dart';
+import 'package:boardease_application/auxiliary/tenant_status.dart';
+
 import 'package:flutter/material.dart';
 
 import '../auxiliary/recordbar.dart';
@@ -24,18 +22,26 @@ class _MyHomePageState extends State<MyHomePage> {
             backgroundColor: Colors.blueGrey,
             elevation: 0.0,
           ),
-          body: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0,10.0),
-                child: Container(
+          body: Center(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                  padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0,10.0),
                   child: RecordBar()
-                )
+              ),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return TenantStatus();
+                        }));
+                      },
+                      child: Text('View these Tenants'),
+                  )
+            ]
+        ),
           ),
-        ]
-      ),
-    );
+     );
   }
 }
 

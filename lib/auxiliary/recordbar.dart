@@ -30,8 +30,8 @@ class _RecordBarState extends State<RecordBar> {
             tween: Tween(begin: 0.0, end: tenant.length / 30),
             duration: Duration(seconds: 3),
             builder: (context, value, _) => SizedBox(
-              width: 200,
-              height: 200,
+              width: 50,
+              height: 50,
               child: CircularProgressIndicator(
                   value: value,
                   valueColor: AlwaysStoppedAnimation<Color> (Colors.blueAccent),
