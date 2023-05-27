@@ -13,11 +13,11 @@ class RecordBar extends StatefulWidget {
 class _RecordBarState extends State<RecordBar> {
 
   List<Tenant> tenant = [
-    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
-    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
-    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212', email: 'grrrr', status: PaymentStatus.notPayed, startDate: DateTime.now()),
-    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978621212', email: 'grrrr', status: PaymentStatus.notFullyPayed, startDate: DateTime.now()),
-    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09438601212', email: 'grrrr', status: PaymentStatus.fullyPayed, startDate: DateTime.now())
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212',  status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212',  status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212',  status: PaymentStatus.notPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978621212',  status: PaymentStatus.notFullyPayed, startDate: DateTime.now()),
+    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09438601212',  status: PaymentStatus.fullyPayed, startDate: DateTime.now())
   ];
 
   @override

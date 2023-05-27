@@ -19,7 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
           appBar: AppBar(
             title: const Text('BoardEase'),
             centerTitle: true,
-            backgroundColor: Colors.blueGrey,
+            backgroundColor: Colors.blue[300],
             elevation: 0.0,
           ),
           body: Center(
