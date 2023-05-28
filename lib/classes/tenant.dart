@@ -1,11 +1,28 @@
 import 'package:boardease_application/classes/paymentstatus.dart';
-import 'package:boardease_application/classes/person.dart';
 
-class Tenant extends Person{
+class Tenant{
 
+  int? id;
+  String name;
+  String contactInfo;
   PaymentStatus status;
   DateTime startDate;
 
-  Tenant({required name, required contactInfo,required this.status, required this.startDate}) : super(name: name, contactInfo: contactInfo);
+  Tenant(this.name, this.contactInfo,this.status, this.startDate);
+
+  Tenant.withId(this.name, this.contactInfo,this.status, this.startDate);
+
+  int? get getId => id;
+
+  String get getName => name;
+
+  String get getContactInfo => contactInfo;
+
+  // mas better talig e int ang status
+  PaymentStatus get getStatus => status;
+
+  DateTime get getStartingDate => startDate;
+
+  // setters
 
 }

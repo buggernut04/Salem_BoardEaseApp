@@ -14,11 +14,8 @@ class TenantList extends StatefulWidget {
 class _TenantListState extends State<TenantList> {
 
   List<Tenant> tenant = [
-    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212',  status: PaymentStatus.notPayed, startDate: DateTime.now()),
-    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212',  status: PaymentStatus.notPayed, startDate: DateTime.now()),
-    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978601212',  status: PaymentStatus.notPayed, startDate: DateTime.now()),
-    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09978621212',  status: PaymentStatus.notFullyPayed, startDate: DateTime.now()),
-    Tenant(name: 'Michael Cye R. Salem', contactInfo: '09438601212',  status: PaymentStatus.fullyPayed, startDate: DateTime.now())
+    Tenant('Michael Cye R. Salem', '09978601212',  PaymentStatus.notPayed, DateTime.now()),
+
   ];
 
   String toPrint(int index){

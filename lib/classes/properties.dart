@@ -1,9 +1,11 @@
+import 'package:boardease_application/classes/payment.dart';
+
 class Property{
 
   String boardingHouseName;
-  String location;
-  int numOfBoarders;
+  Payment payment;
+  int maxNumOfBoarders;
 
-  Property({required this.boardingHouseName, required this.location, required this.numOfBoarders});
+  Property({required this.boardingHouseName, required this.payment, required this.maxNumOfBoarders});
 
 }
