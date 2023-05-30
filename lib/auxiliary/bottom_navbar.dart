@@ -42,8 +42,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 backgroundColor: Colors.blue,
             ),
             BottomNavigationBarItem(
-                label: 'Profile',
-                icon: Icon(Icons.person),
+                label: 'Payment',
+                icon: Icon(Icons.payment),
                 backgroundColor: Colors.blue
             )
           ],

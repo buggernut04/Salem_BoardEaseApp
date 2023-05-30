@@ -25,13 +25,62 @@ class _TenantDetailState extends State<TenantDetail> {
     );
   }
 
-  static var _paymentStatus = ['Payed', 'Not Fully Payed', 'Not Payed'];
+  Padding controller(TextEditingController contName, String label){
+    return Padding(
+        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+        child: TextField(
+          controller: contName,
+          style: Theme.of(context).textTheme.titleSmall,
+          onChanged: (value){},
+          decoration: InputDecoration(
+              labelText: label,
+              labelStyle: Theme.of(context).textTheme.titleSmall,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0)
+              )
+          ),
+        )
+    );
+  }
+
+  final _paymentStatus = ['Payed', 'Not Fully Payed', 'Not Payed'];
+
+  Column status(String title){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        ListTile(
+          title: Column(
+            children: <Widget>[
+              DropdownButton(
+                items: _paymentStatus.map((String dropDownStringItem) => DropdownMenuItem<String>(
+                  value: dropDownStringItem,
+                  child: Text(dropDownStringItem),
+                )
+                ).toList(),
+                style: TextStyle(
+                    color: Colors.black
+                ),
+                value: 'Not Payed',
+                onChanged: (valueSelectedByUser) {
+                  setState(() {
+
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    TextStyle? textStyle = Theme.of(context).textTheme.titleSmall;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.appBarTitle),
@@ -43,45 +92,19 @@ class _TenantDetailState extends State<TenantDetail> {
         padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
         child: ListView(
           children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-              child: TextField(
-                controller: nameController,
-                style: textStyle,
-                onChanged: (value){},
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                  labelStyle: textStyle,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)
-                  )
-                ),
-              )
-            ),
-            Padding(
-                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                child: TextField(
-                  controller: contactInfoController,
-                  style: textStyle,
-                  onChanged: (value){},
-                  decoration: InputDecoration(
-                      labelText: 'Contact Number',
-                      labelStyle: textStyle,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0)
-                      )
-                  ),
-                )
-            ),
+
+            controller(nameController, 'Name'),
+            controller(contactInfoController, 'Contact Number'),
+
             Padding(
                 padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: TextField(
                   controller: datePicker,
-                  style: textStyle,
+                  style: Theme.of(context).textTheme.titleSmall,
                   onChanged: (value){},
                   decoration: InputDecoration(
                       labelText: 'Starting Date',
-                      labelStyle: textStyle,
+                      labelStyle: Theme.of(context).textTheme.titleSmall,
                       icon: Icon(Icons.calendar_today_rounded
                       ),
                   ),
@@ -100,33 +123,11 @@ class _TenantDetailState extends State<TenantDetail> {
             Padding(
               padding: EdgeInsets.only(top: 10.0, bottom: 10.0),),
 
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Rental Fee',
-                  style: textStyle,
-                ),
-                ListTile(
-                  title: DropdownButton(
-                    items: _paymentStatus.map((String dropDownStringItem) => DropdownMenuItem<String>(
-                      child: Text(dropDownStringItem),
-                      value: dropDownStringItem,
-                    )
-                    ).toList(),
-                    style: TextStyle(
-                        color: Colors.black
-                    ),
-                    value: 'Not Payed',
-                    onChanged: (valueSelectedByUser) {
-                      setState(() {
+            status('Rental Fee'),
+            status('Water Bill'),
+            status('Electric Bill'),
+            status('Additional Payment'),
 
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
             Padding(
                 padding: EdgeInsets.only(top: 13.0, bottom: 13.0),
                 child: Row(
@@ -142,11 +143,7 @@ class _TenantDetailState extends State<TenantDetail> {
                                 color: Colors.blue
                               ),
                           ),
-                          onPressed: () {
-                            setState(() {
-
-                            });
-                            },
+                          onPressed: () {},
                         )
                     ),
 

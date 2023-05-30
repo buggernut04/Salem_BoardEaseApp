@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../classes/paymentstatus.dart';
 import '../classes/tenant.dart';
 
 class RecordBar extends StatefulWidget {
@@ -13,7 +12,7 @@ class RecordBar extends StatefulWidget {
 class _RecordBarState extends State<RecordBar> {
 
   List<Tenant> tenant = [
-    Tenant('Michael Cye R. Salem', '09978601212',  PaymentStatus.notPayed, DateTime.now()),
+    Tenant('Michael Cye R. Salem', '09978601212',  3, DateTime.now()),
   ];
 
   @override

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'auxiliary/splashscreen.dart';
 import 'components/homepage.dart';
 import 'components/payment_analysis.dart';
-import 'components/profile.dart';
+import 'components/payment_setup.dart';
 import 'components/tenant_list.dart';
 
 void main() => runApp(const BoardEaseApp());
@@ -16,7 +16,7 @@ class BoardEaseApp extends StatelessWidget {
     MyHomePage(),
     TenantList(),
     Report(),
-    Profile(),
+    PaymentDetail(),
   ];
 
   // This widget is the root of my application.
