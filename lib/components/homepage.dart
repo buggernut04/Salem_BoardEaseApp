@@ -1,7 +1,6 @@
 import 'package:boardease_application/auxiliary/tenant_status.dart';
 
 import 'package:flutter/material.dart';
-
 import '../auxiliary/recordbar.dart';
 
 class MyHomePage extends StatefulWidget    {
