@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../classes/tenant.dart';
+import '../database/databasehelper.dart';
+
 
 class RecordBar extends StatefulWidget {
   const RecordBar({Key? key}) : super(key: key);
@@ -11,24 +12,37 @@ class RecordBar extends StatefulWidget {
 
 class _RecordBarState extends State<RecordBar> {
 
-  List<Tenant> tenant = [
-    Tenant('Michael Cye R. Salem', '09978601212',  3, DateTime.now()),
-  ];
+  double _progress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTenantCount();
+  }
+
+  void _fetchTenantCount() {
+    DatabaseHelper.databaseHelper.getTenantCount().then((count) {
+      setState(() {
+        _progress = count!.toDouble();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
           TweenAnimationBuilder(
-            tween: Tween(begin: 0.0, end: tenant.length / 30),
+            tween: Tween(begin: 0.0, end: _progress),
             duration: Duration(seconds: 3),
             builder: (context, value, _) => SizedBox(
               width: 50,
               height: 50,
               child: CircularProgressIndicator(
-                  value: value,
+                  value: _progress,
                   valueColor: AlwaysStoppedAnimation<Color> (Colors.blueAccent),
                   strokeWidth: 8,
                   backgroundColor: Colors.black38,
@@ -36,7 +50,7 @@ class _RecordBarState extends State<RecordBar> {
             ),
           ),
             SizedBox(height: 16.0),
-            Text('Progress: ${(tenant.length - 5 / tenant.length * 100).toStringAsFixed(1)}%'),
+            Text('Progress: ${(_progress)} / ${(_progress)}'),
           ],
         ),
       );

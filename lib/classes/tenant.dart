@@ -3,39 +3,29 @@ class Tenant{
   int? id;
   String name;
   String contactInfo;
-  int status; // 1 -> Payed, 2 -> Not Fully Payed, 3 -> Not Payed
+  int status;
   DateTime startDate;
 
-  Tenant(this.name, this.contactInfo,this.status, this.startDate);
+  Tenant({this.id, required this.name, required this.contactInfo,required this.status, required this.startDate});
 
-  Tenant.withId(this.name, this.contactInfo,this.status, this.startDate);
 
-  int? get getId => id;
-
-  String get getName => name;
-
-  String get getContactInfo => contactInfo;
-
-  // mas better talig e int ang status
-  int get getStatus => status;
-
-  DateTime get getStartingDate => startDate;
-
-  // setters
-  set setName(String newName){
-    this.name = newName;
+  // Convert a Tenant object into a Map Object
+  Map<String, dynamic> toMap(){
+    return {
+      'id': id,
+      'name': name,
+      'contactInfo': contactInfo,
+      'startDate': startDate.toIso8601String(),
+      'status': status,
+    };
   }
 
-  set setContactInfo(String newContact){
-    this.contactInfo = newContact;
-  }
-
-  set setDate(DateTime newDate){
-    this.startDate = newDate;
-  }
-
-  set setStatus(int newStatus){
-    newStatus >= 1 && newStatus <= 3 ? status = newStatus : status = status;
-  }
-
+  // Extract a Tenant Object from a Map object
+  factory Tenant.fromMapObject(Map<String, dynamic> json) => Tenant(
+      id: json['id'],
+      name: json['name'],
+      contactInfo: json['contactInfo'],
+      startDate: DateTime.parse(json['startDate']),
+      status: json['status'],
+    );
 }

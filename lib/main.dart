@@ -1,16 +1,21 @@
 import 'package:boardease_application/auxiliary/bottom_navbar.dart';
 import 'package:flutter/material.dart';
 
+
 import 'auxiliary/splashscreen.dart';
 import 'components/homepage.dart';
 import 'components/payment_analysis.dart';
 import 'components/payment_setup.dart';
 import 'components/tenant_list.dart';
 
-void main() => runApp(const BoardEaseApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(const BoardEaseApp());
+}
 
 class BoardEaseApp extends StatelessWidget {
-  const BoardEaseApp({super.key });
+  const BoardEaseApp({super.key});
 
   final List<Widget> options = const[
     MyHomePage(),
@@ -18,6 +23,7 @@ class BoardEaseApp extends StatelessWidget {
     Report(),
     PaymentDetail(),
   ];
+
 
   // This widget is the root of my application.
   @override

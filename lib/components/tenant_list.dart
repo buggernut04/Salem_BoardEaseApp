@@ -1,4 +1,10 @@
+import 'dart:async';
+
+import 'package:boardease_application/classes/tenant.dart';
+import 'package:boardease_application/database/databasehelper.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../auxiliary/tenant_detail.dart';
 
@@ -11,19 +17,67 @@ class TenantList extends StatefulWidget {
 
 class _TenantListState extends State<TenantList> {
 
+  List<Tenant> tenants = [];
   int count = 0;
 
-  void route(String title){
-    Navigator.push(
-        context,
+  void route(Tenant tenant, String title) async {
+   bool result =  await Navigator.push(
+       context,
         MaterialPageRoute(builder: (context) {
-          return TenantDetail(appBarTitle: title);
+          return TenantDetail( appBarTitle: title, tenant: tenant);
         })
     );
+   if(result){
+     updateListView();
+   }
   }
+
+  String getStatus(int? status){
+    if(status == 1){
+      return 'Payed';
+    }
+    else if(status == 2){
+      return 'Not Fully Payed';
+    }
+    else{
+      return 'Not Payed';
+    }
+  }
+
+  // every status has its own color
+  Color getStatusColor(int? status){
+    if(status == 1){
+      return Colors.yellow;
+    }
+    else if(status == 2){
+      return Colors.greenAccent;
+    }
+    else{
+      return Colors.red;
+    } 
+  }
+
+  void updateListView(){
+    final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
+
+    dbFuture.then((database){
+      Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
+      tenantListFuture.then((tenants){
+        setState(() {
+          this.tenants = tenants;
+          count = tenants.length;
+        });
+      });
+    });
+  }
+
+  String dateInfo(DateTime dt) => DateFormat('MM-dd-yyyy').format(dt);
 
   @override
   Widget build(BuildContext context) {
+
+    updateListView();
+
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -40,21 +94,33 @@ class _TenantListState extends State<TenantList> {
                           elevation: 1.0,
                           child: ListTile(
                             onTap: () {
-                              route('Edit Tenant');
+                              route(this.tenants[position], 'Edit Tenant');
                             },
                             leading: CircleAvatar(
-                              //set background color in a function when database  is applied
+                              backgroundColor: getStatusColor(this.tenants[position].status),
                               child: Icon(Icons.perm_identity_rounded),
                             ),
                             title: Text(
-                                'Name of Tenant',
+                                this.tenants[position].name.toString(),
                                 style: TextStyle(
                                   fontSize: 18.0,
                                   color: Colors.grey[600],
                                 )
                             ),
-                            subtitle: Text('Date'),
-                            trailing: Text('Status'),
+                            subtitle: Text(
+                                DateFormat('MM-dd-yyyy').format(tenants[position].startDate),
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  color: Colors.grey[600],
+                                )
+                            ),
+                            trailing:Text(
+                              getStatus(this.tenants[position].status),
+                              style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.grey[600],
+                               )
+                            ),
                           )
                       )
                   );
@@ -62,7 +128,7 @@ class _TenantListState extends State<TenantList> {
             ),
             floatingActionButton: FloatingActionButton(
                 onPressed: () {
-                  route('Add Tenant');
+                  route(Tenant(name: '', contactInfo: '', status: 3, startDate: DateTime.now()), 'Add Tenant');
                 },
               child: Icon(Icons.add),
             )

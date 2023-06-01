@@ -1,10 +1,14 @@
+import 'package:boardease_application/database/databasehelper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../classes/tenant.dart';
+
 class TenantDetail extends StatefulWidget {
-  const TenantDetail({Key? key, required this.appBarTitle}) : super(key: key);
+  const TenantDetail({Key? key, required this.appBarTitle, required this.tenant}) : super(key: key);
 
   final String appBarTitle;
+  final Tenant tenant;
 
   @override
   State<TenantDetail> createState() => _TenantDetailState();
@@ -25,27 +29,19 @@ class _TenantDetailState extends State<TenantDetail> {
     );
   }
 
-  Padding controller(TextEditingController contName, String label){
-    return Padding(
-        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-        child: TextField(
-          controller: contName,
-          style: Theme.of(context).textTheme.titleSmall,
-          onChanged: (value){},
-          decoration: InputDecoration(
-              labelText: label,
-              labelStyle: Theme.of(context).textTheme.titleSmall,
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0)
-              )
-          ),
-        )
-    );
-  }
-
   final _paymentStatus = ['Payed', 'Not Fully Payed', 'Not Payed'];
 
-  Column status(String title){
+  String getStatusAsString(int value){
+    String priority = value == 1 ?  _paymentStatus[0] : value == 2 ?  _paymentStatus[1] : _paymentStatus[2];
+    return priority;
+  }
+
+  void updateStatusAsInt(String value){
+    value == 'Payed' ? widget.tenant.status = 1 : value == 'Not Fully Payed' ? widget.tenant.status = 2 : widget.tenant.status = 3;
+  }
+
+
+  Column status(String title, int value){
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -65,10 +61,10 @@ class _TenantDetailState extends State<TenantDetail> {
                 style: TextStyle(
                     color: Colors.black
                 ),
-                value: 'Not Payed',
+                value: getStatusAsString(value),
                 onChanged: (valueSelectedByUser) {
                   setState(() {
-
+                    updateStatusAsInt(valueSelectedByUser!);
                   });
                 },
               ),
@@ -79,8 +75,49 @@ class _TenantDetailState extends State<TenantDetail> {
     );
   }
 
+  // remove a tenant
+  void removeTenant(BuildContext context, Tenant tenant) async {
+    int? result = await DatabaseHelper.databaseHelper.deleteTenant(widget.tenant.id);
+
+    if(result != 0){
+      showSnackBar(context, 'Tenant Removed');
+    }
+  }
+
+  void showSnackBar(BuildContext context, String message){
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  // save the tenant to the database
+  void saveTenant() async {
+    int? result;
+
+    if(widget.tenant.id != null){
+      result = await DatabaseHelper.databaseHelper.updateTenant(widget.tenant);
+    } else{
+      result = await DatabaseHelper.databaseHelper.insertTenant(widget.tenant);
+    }
+
+    result != 0 ? debugPrint('Success') : debugPrint('Fail');
+  }
+
+  String removeOrCancel(){
+    String label = '';
+
+    widget.appBarTitle == 'Add Tenant' ? label = 'Cancel' : label = 'Remove';
+
+    return label;
+  }
+
+
   @override
   Widget build(BuildContext context) {
+
+    nameController.text = widget.tenant.name;
+    contactInfoController.text = widget.tenant.contactInfo;
+    datePicker.text = DateFormat('MM-dd-yyyy').format(widget.tenant.startDate);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.appBarTitle),
@@ -93,15 +130,50 @@ class _TenantDetailState extends State<TenantDetail> {
         child: ListView(
           children: <Widget>[
 
-            controller(nameController, 'Name'),
-            controller(contactInfoController, 'Contact Number'),
+              Padding(
+              padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                child: TextField(
+                  controller: nameController,
+                  style: Theme.of(context).textTheme.titleSmall,
+                  onChanged: (value){
+                    widget.tenant.name = nameController.text;
+                  },
+                  decoration: InputDecoration(
+                      labelText: 'Name',
+                      labelStyle: Theme.of(context).textTheme.titleSmall,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0)
+                      )
+                  ),
+                )
+            ),
+
+            Padding(
+                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                child: TextField(
+                  controller: contactInfoController,
+                  style: Theme.of(context).textTheme.titleSmall,
+                  onChanged: (value){
+                    widget.tenant.contactInfo = contactInfoController.text;
+                  },
+                  decoration: InputDecoration(
+                      labelText: 'Contact Number',
+                      labelStyle: Theme.of(context).textTheme.titleSmall,
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0)
+                      )
+                  ),
+                )
+            ),
 
             Padding(
                 padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: TextField(
                   controller: datePicker,
                   style: Theme.of(context).textTheme.titleSmall,
-                  onChanged: (value){},
+                  onChanged: (value){
+                    widget.tenant.startDate = datePicker as DateTime;
+                  },
                   decoration: InputDecoration(
                       labelText: 'Starting Date',
                       labelStyle: Theme.of(context).textTheme.titleSmall,
@@ -113,7 +185,7 @@ class _TenantDetailState extends State<TenantDetail> {
 
                     if(pickedDate != null){
                       setState(() {
-                        datePicker.text = DateFormat.yMMMEd().format(pickedDate);
+                        datePicker.text = DateFormat.yMMMd(pickedDate) as String;
                       });
                     }
                   },
@@ -123,10 +195,10 @@ class _TenantDetailState extends State<TenantDetail> {
             Padding(
               padding: EdgeInsets.only(top: 10.0, bottom: 10.0),),
 
-            status('Rental Fee'),
-            status('Water Bill'),
-            status('Electric Bill'),
-            status('Additional Payment'),
+            status('Rental Fee', widget.tenant.status),
+            status('Water Bill', widget.tenant.status),
+            status('Electric Bill', widget.tenant.status),
+            status('Additional Payment', widget.tenant.status),
 
             Padding(
                 padding: EdgeInsets.only(top: 13.0, bottom: 13.0),
@@ -143,7 +215,10 @@ class _TenantDetailState extends State<TenantDetail> {
                                 color: Colors.blue
                               ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            saveTenant();
+                            Navigator.pop(context, true);
+                          },
                         )
                     ),
 
@@ -152,14 +227,15 @@ class _TenantDetailState extends State<TenantDetail> {
                     Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(foregroundColor: Colors.white70),
-                          child: Text( widget.appBarTitle == 'Add Tenant' ? 'Cancel' : 'Remove',
+                          child: Text( removeOrCancel(),
                             textScaleFactor: 1.5,
                             style: TextStyle(
                                 color: Colors.blue
                             ),
                           ),
                           onPressed: () {
-                            Navigator.pop(context);
+                            removeTenant(context, widget.tenant);
+                            Navigator.pop(context, true);
                           },
                         )
                     )
