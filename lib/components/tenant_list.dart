@@ -90,8 +90,9 @@ class _TenantListState extends State<TenantList> {
                   return Padding(
                       padding: const EdgeInsets.all(1.0),
                       child: Card(
-                          margin: EdgeInsets.fromLTRB(10.0, 20.0, 10.0,1.0),
-                          elevation: 1.0,
+                          color: Colors.white,
+                          margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0,1.0),
+                          elevation: 2.0,
                           child: ListTile(
                             onTap: () {
                               route(this.tenants[position], 'Edit Tenant');

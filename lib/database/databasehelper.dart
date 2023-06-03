@@ -44,7 +44,7 @@ class DatabaseHelper {
   // Fetch Operation: Get all note objects from the database
   Future<List<Tenant>> getTenantList() async{
     Database? db = await databaseHelper.database;
-    var tenant = await db?.query(tenantTable, orderBy: colStatus);
+    var tenant = await db?.query(tenantTable, orderBy: colStartDate);
 
     List<Tenant>? tenantList = tenant != null ? tenant.map((e) => Tenant.fromMapObject(e)).toList() : [];
 
@@ -80,11 +80,21 @@ class DatabaseHelper {
   }
 
   // Get number of all tenants in the database
-  Future<int?> getTenantCount() async{
+  Future<int?> getAllTenantNum() async{
     Database? db = await databaseHelper.database;
 
     List<Map<String, dynamic>>? x = await db?.rawQuery('SELECT COUNT (*) from $tenantTable');
     
+    int? result = Sqflite.firstIntValue(x!);
+    return result;
+  }
+
+  // Get number of all tenants that not yet payed in the database
+  Future<int?> getNotPayedTenantNum() async{
+    Database? db = await databaseHelper.database;
+
+    List<Map<String, dynamic>>? x = await db?.rawQuery('SELECT COUNT (*) from $tenantTable where $colStatus = 3');
+
     int? result = Sqflite.firstIntValue(x!);
     return result;
   }

@@ -12,7 +12,9 @@ class RecordBar extends StatefulWidget {
 
 class _RecordBarState extends State<RecordBar> {
 
-  double _progress = 0.0;
+  double _allTenants = 0.0;
+  double _allTenantsNotPayed = 0.0;
+
 
   @override
   void initState() {
@@ -21,9 +23,15 @@ class _RecordBarState extends State<RecordBar> {
   }
 
   void _fetchTenantCount() {
-    DatabaseHelper.databaseHelper.getTenantCount().then((count) {
+    DatabaseHelper.databaseHelper.getAllTenantNum().then((count) {
       setState(() {
-        _progress = count!.toDouble();
+        _allTenants = count!.toDouble();
+      });
+    });
+
+    DatabaseHelper.databaseHelper.getNotPayedTenantNum().then((count) {
+      setState(() {
+        _allTenantsNotPayed = count!.toDouble();
       });
     });
   }
@@ -36,21 +44,21 @@ class _RecordBarState extends State<RecordBar> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
           TweenAnimationBuilder(
-            tween: Tween(begin: 0.0, end: _progress),
+            tween: Tween(begin: 0.0, end: _allTenantsNotPayed / _allTenants),
             duration: Duration(seconds: 3),
             builder: (context, value, _) => SizedBox(
-              width: 50,
+              width: 100,
               height: 50,
               child: CircularProgressIndicator(
-                  value: _progress,
+                  value:  value,
                   valueColor: AlwaysStoppedAnimation<Color> (Colors.blueAccent),
-                  strokeWidth: 8,
+                  strokeWidth: 15,
                   backgroundColor: Colors.black38,
                 ),
             ),
           ),
             SizedBox(height: 16.0),
-            Text('Progress: ${(_progress)} / ${(_progress)}'),
+            Text('${(_allTenantsNotPayed)} / ${(_allTenants)}'),
           ],
         ),
       );

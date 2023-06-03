@@ -22,24 +22,20 @@ class _TenantDetailState extends State<TenantDetail> {
 
   Future<DateTime?> _showDatePicker(){
     return showDatePicker(
-        context: context, 
-        initialDate: DateTime.now(), 
-        firstDate: DateTime(2000), 
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2000),
         lastDate: DateTime(2099),
     );
   }
 
-  final _paymentStatus = ['Payed', 'Not Fully Payed', 'Not Payed'];
+  final _paymentStatus = ['Payed', 'Not Payed'];
 
   String getStatusAsString(int value){
-    String priority = value == 1 ?  _paymentStatus[0] : value == 2 ?  _paymentStatus[1] : _paymentStatus[2];
+    String priority = value == 1 ?  _paymentStatus[0] : _paymentStatus[1];
+
     return priority;
   }
-
-  void updateStatusAsInt(String value){
-    value == 'Payed' ? widget.tenant.status = 1 : value == 'Not Fully Payed' ? widget.tenant.status = 2 : widget.tenant.status = 3;
-  }
-
 
   Column status(String title, int value){
     return Column(
@@ -64,7 +60,7 @@ class _TenantDetailState extends State<TenantDetail> {
                 value: getStatusAsString(value),
                 onChanged: (valueSelectedByUser) {
                   setState(() {
-                    updateStatusAsInt(valueSelectedByUser!);
+
                   });
                 },
               ),
@@ -102,21 +98,13 @@ class _TenantDetailState extends State<TenantDetail> {
     result != 0 ? debugPrint('Success') : debugPrint('Fail');
   }
 
-  String removeOrCancel(){
-    String label = '';
-
-    widget.appBarTitle == 'Add Tenant' ? label = 'Cancel' : label = 'Remove';
-
-    return label;
-  }
-
-
   @override
   Widget build(BuildContext context) {
 
     nameController.text = widget.tenant.name;
     contactInfoController.text = widget.tenant.contactInfo;
-    datePicker.text = DateFormat('MM-dd-yyyy').format(widget.tenant.startDate);
+    datePicker.text = DateFormat('yyyy-MM-dd').format(widget.tenant.startDate);
+
 
     return Scaffold(
       appBar: AppBar(
@@ -124,6 +112,12 @@ class _TenantDetailState extends State<TenantDetail> {
         centerTitle: true,
         backgroundColor: Colors.blue[300],
         elevation: 0.0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context, true);
+          },
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
@@ -169,25 +163,23 @@ class _TenantDetailState extends State<TenantDetail> {
             Padding(
                 padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: TextField(
-                  controller: datePicker,
-                  style: Theme.of(context).textTheme.titleSmall,
-                  onChanged: (value){
-                    widget.tenant.startDate = datePicker as DateTime;
-                  },
-                  decoration: InputDecoration(
-                      labelText: 'Starting Date',
-                      labelStyle: Theme.of(context).textTheme.titleSmall,
-                      icon: Icon(Icons.calendar_today_rounded
+                    controller: datePicker,
+                    style: Theme.of(context).textTheme.titleSmall,
+                    decoration: InputDecoration(
+                        labelText: 'Starting Date',
+                        labelStyle: Theme.of(context).textTheme.titleSmall,
+                        icon: Icon(Icons.calendar_today_rounded
                       ),
-                  ),
-                  onTap: () async {
-                    DateTime? pickedDate = await _showDatePicker();
+                    ),
+                    onTap: () async {
+                      DateTime? pickedDate = await _showDatePicker();
 
-                    if(pickedDate != null){
-                      setState(() {
-                        datePicker.text = DateFormat.yMMMd(pickedDate) as String;
-                      });
-                    }
+                      if(pickedDate != null){
+                        setState(() {
+                          datePicker.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                          widget.tenant.startDate = pickedDate;
+                        });
+                      }
                   },
                 )
             ),
@@ -227,14 +219,17 @@ class _TenantDetailState extends State<TenantDetail> {
                     Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(foregroundColor: Colors.white70),
-                          child: Text( removeOrCancel(),
+                          child: Text( widget.appBarTitle == 'Add Tenant' ? 'Cancel' : 'Remove',
                             textScaleFactor: 1.5,
                             style: TextStyle(
                                 color: Colors.blue
                             ),
                           ),
                           onPressed: () {
-                            removeTenant(context, widget.tenant);
+                            if(widget.appBarTitle == 'Edit Tenant') {
+                              removeTenant(context, widget.tenant);
+                            }
+
                             Navigator.pop(context, true);
                           },
                         )

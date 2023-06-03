@@ -1,9 +1,9 @@
-abstract class Payment{
+class Payment{
 
+  int? id;
+  String paymentName;
   int amount;
-  DateTime? paymentDate;
+  int isPayed; // 0 - not payed : 1 - payed
 
-  Payment(this.amount, this.paymentDate);
-
-  Payment.onlyAmount(this.amount);
+  Payment({this.id, required this.paymentName, required this.amount,required this.isPayed});
 }
