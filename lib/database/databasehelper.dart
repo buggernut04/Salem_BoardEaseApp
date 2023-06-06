@@ -10,8 +10,9 @@ class DatabaseHelper {
 
   DatabaseHelper._createInstance();
   static DatabaseHelper databaseHelper = DatabaseHelper._createInstance(); // Singleton DatabaseHelper
-  static Database? _database; // Singleton Datebase
+  static Database? _database; // Singleton Database
 
+  // tenants information
   String tenantTable = 'tenant_table';
   String colId = 'id';
   String colName = 'name';
@@ -19,6 +20,21 @@ class DatabaseHelper {
   String colStartDate = 'startDate';
   String colCurrentDate = 'currentDate';
   String colStatus = 'status';
+
+  // tenants payment
+  String tenantPaymentTable = 'tenantPayment_table';
+  String colTPaymentId = 'id';
+  String colTPaymentName = 'paymentName';
+  String colTPaymentAmount = "amount";
+  String colTPaymentIsPayed = "isPayed";
+
+  // owners payment
+  String ownerPaymentTable = 'ownerPayment_table';
+  String colWPaymentId = 'id';
+  String colWPaymentName = 'paymentName';
+  String colWPaymentAmount = "amount";
+  String colWPaymentDatePayed = "datePayed";
+
 
   Future<Database?> get database async{
     if(_database != null){
@@ -40,8 +56,13 @@ class DatabaseHelper {
 
   void _createDb(Database db, int newVersion) async{
     await db.execute('CREATE TABLE $tenantTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT, $colContactInfo TEXT, $colStartDate TEXT, $colCurrentDate TEXT, $colStatus INTEGER)');
+
+    await db.execute('CREATE TABLE $tenantPaymentTable($colTPaymentId INTEGER PRIMARY KEY AUTOINCREMENT, $colTPaymentName TEXT, $colTPaymentAmount INTEGER, $colTPaymentIsPayed INTEGER)');
+
+    await db.execute('CREATE TABLE $ownerPaymentTable($colWPaymentId INTEGER PRIMARY KEY AUTOINCREMENT, $colWPaymentName TEXT, $colWPaymentAmount INTEGER, $colWPaymentDatePayed TEXT)');
   }
 
+  // TENANT INFORMATION SECTION
   //Insert Operation: Insert a Tenant object to the database
   Future<int?> insertTenant(Tenant tenant) async{
     Database? db = await databaseHelper.database;
@@ -130,7 +151,13 @@ class DatabaseHelper {
     return result;
   }
 
-  // to be deleted
+  // TENANT PAYMENT SECTION
+
+
+
+  // OWNER PAYMENT SECTION
+
+  // to be deleted functions
   void deleteTable() async {
     Database? db = await databaseHelper.database;
 
@@ -142,8 +169,4 @@ class DatabaseHelper {
 
     await db?.execute('CREATE TABLE $tenantTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT, $colContactInfo TEXT, $colStartDate TEXT,$colCurrentDate TEXT, $colStatus INTEGER)');
   }
-
-
-
-
 }
