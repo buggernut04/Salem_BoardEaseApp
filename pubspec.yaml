@@ -30,6 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   lottie: ^1.1.0
   sqflite: any
   path_provider: any
@@ -38,6 +39,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   intl: ^0.17.0
+  animated_bottom_navigation_bar: ^1.0.1
+  percent_indicator: ^3.0.1
 
 dev_dependencies:
   flutter_test:

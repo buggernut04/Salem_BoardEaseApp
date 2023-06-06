@@ -17,6 +17,7 @@ class DatabaseHelper {
   String colName = 'name';
   String colContactInfo = 'contactInfo';
   String colStartDate = 'startDate';
+  String colCurrentDate = 'currentDate';
   String colStatus = 'status';
 
   Future<Database?> get database async{
@@ -38,19 +39,8 @@ class DatabaseHelper {
   }
 
   void _createDb(Database db, int newVersion) async{
-    await db.execute('CREATE TABLE $tenantTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT, $colContactInfo TEXT, $colStartDate TEXT, $colStatus INTEGER)');
+    await db.execute('CREATE TABLE $tenantTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT, $colContactInfo TEXT, $colStartDate TEXT, $colCurrentDate TEXT, $colStatus INTEGER)');
   }
-
-  // Fetch Operation: Get all note objects from the database
-  Future<List<Tenant>> getTenantList() async{
-    Database? db = await databaseHelper.database;
-    var tenant = await db?.query(tenantTable, orderBy: colStartDate);
-
-    List<Tenant>? tenantList = tenant != null ? tenant.map((e) => Tenant.fromMapObject(e)).toList() : [];
-
-    return tenantList;
-  }
-
 
   //Insert Operation: Insert a Tenant object to the database
   Future<int?> insertTenant(Tenant tenant) async{
@@ -79,6 +69,27 @@ class DatabaseHelper {
     return result;
   }
 
+  // Fetch Operation: Get all tenant objects from the database
+  Future<List<Tenant>> getTenantList() async{
+    Database? db = await databaseHelper.database;
+    var tenant = await db?.query(tenantTable, orderBy: colCurrentDate);
+
+    List<Tenant>? tenantList = tenant != null ? tenant.map((e) => Tenant.fromMapObject(e)).toList() : [];
+
+    return tenantList;
+  }
+
+  // Fetch Operation: Get all payed tenant objects from the database
+  Future<List<Tenant>> getPayedTenantList() async{
+    Database? db = await databaseHelper.database;
+
+    var tenant = await db?.query(tenantTable, orderBy: colCurrentDate, where: '$colStatus = 1');
+
+    List<Tenant>? tenantList = tenant != null ? tenant.map((e) => Tenant.fromMapObject(e)).toList() : [];
+
+    return tenantList;
+  }
+
   // Get number of all tenants in the database
   Future<int?> getAllTenantNum() async{
     Database? db = await databaseHelper.database;
@@ -89,7 +100,27 @@ class DatabaseHelper {
     return result;
   }
 
-  // Get number of all tenants that not yet payed in the database
+  // Get number of all tenants that already payed
+  Future<int?> getPayedTenantNum() async{
+    Database? db = await databaseHelper.database;
+
+    List<Map<String, dynamic>>? x = await db?.rawQuery('SELECT COUNT (*) from $tenantTable where $colStatus = 1');
+
+    int? result = Sqflite.firstIntValue(x!);
+    return result;
+  }
+
+  // Get number of all tenants that are not fully payed
+  Future<int?> getNotFullyPayedTenantNum() async{
+    Database? db = await databaseHelper.database;
+
+    List<Map<String, dynamic>>? x = await db?.rawQuery('SELECT COUNT (*) from $tenantTable where $colStatus = 2');
+
+    int? result = Sqflite.firstIntValue(x!);
+    return result;
+  }
+
+  // Get number of all tenants that not yet payed
   Future<int?> getNotPayedTenantNum() async{
     Database? db = await databaseHelper.database;
 
@@ -98,5 +129,21 @@ class DatabaseHelper {
     int? result = Sqflite.firstIntValue(x!);
     return result;
   }
+
+  // to be deleted
+  void deleteTable() async {
+    Database? db = await databaseHelper.database;
+
+    await db?.execute('DROP TABLE IF EXISTS $tenantTable');
+  }
+
+  void createTable() async{
+    Database? db = await databaseHelper.database;
+
+    await db?.execute('CREATE TABLE $tenantTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT, $colContactInfo TEXT, $colStartDate TEXT,$colCurrentDate TEXT, $colStatus INTEGER)');
+  }
+
+
+
 
 }

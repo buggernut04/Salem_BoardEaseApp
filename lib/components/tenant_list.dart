@@ -63,15 +63,17 @@ class _TenantListState extends State<TenantList> {
     dbFuture.then((database){
       Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
       tenantListFuture.then((tenants){
-        setState(() {
-          this.tenants = tenants;
-          count = tenants.length;
-        });
+        if(mounted) {
+          setState(() {
+            this.tenants = tenants;
+            count = tenants.length;
+          });
+        }
       });
     });
   }
 
-  String dateInfo(DateTime dt) => DateFormat('MM-dd-yyyy').format(dt);
+  String dateInfo(DateTime dt) => DateFormat('MMMM d, y').format(dt);
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +111,7 @@ class _TenantListState extends State<TenantList> {
                                 )
                             ),
                             subtitle: Text(
-                                DateFormat('MM-dd-yyyy').format(tenants[position].startDate),
+                                dateInfo(tenants[position].currentDate),
                                 style: TextStyle(
                                   fontSize: 18.0,
                                   color: Colors.grey[600],
@@ -129,9 +131,13 @@ class _TenantListState extends State<TenantList> {
             ),
             floatingActionButton: FloatingActionButton(
                 onPressed: () {
-                  route(Tenant(name: '', contactInfo: '', status: 3, startDate: DateTime.now()), 'Add Tenant');
+                  route(Tenant(name: '', contactInfo: '', status: 3, startDate: DateTime.now(), currentDate: DateTime.now()), 'Add Tenant');
                 },
-              child: Icon(Icons.add),
+              backgroundColor: Colors.blueAccent,
+              child: const Icon(
+                Icons.person_add,
+                size: 30,
+              ),
             )
     );
   }

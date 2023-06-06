@@ -114,7 +114,7 @@ class _PaymentDetailState extends State<PaymentDetail> {
                 style: Theme.of(context).textTheme.titleSmall,
                 onChanged: (value){},
                 decoration: InputDecoration(
-                  labelText: 'Starting Date',
+                  labelText: 'Date Payed',
                   labelStyle: Theme.of(context).textTheme.titleSmall,
                   icon: Icon(Icons.calendar_today_rounded
                   ),

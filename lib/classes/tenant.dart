@@ -5,8 +5,9 @@ class Tenant{
   String contactInfo;
   int status;
   DateTime startDate;
+  DateTime currentDate;
 
-  Tenant({this.id, required this.name, required this.contactInfo,required this.status, required this.startDate});
+  Tenant({this.id, required this.name, required this.contactInfo,required this.status, required this.startDate, required this.currentDate});
 
 
   // Convert a Tenant object into a Map Object
@@ -16,6 +17,7 @@ class Tenant{
       'name': name,
       'contactInfo': contactInfo,
       'startDate': startDate.toIso8601String(),
+      'currentDate': currentDate.toIso8601String(),
       'status': status,
     };
   }
@@ -26,6 +28,7 @@ class Tenant{
       name: json['name'],
       contactInfo: json['contactInfo'],
       startDate: DateTime.parse(json['startDate']),
+      currentDate: DateTime.parse(json['currentDate']),
       status: json['status'],
     );
 }

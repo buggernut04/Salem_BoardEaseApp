@@ -18,14 +18,15 @@ class _TenantDetailState extends State<TenantDetail> {
 
   TextEditingController nameController = TextEditingController();
   TextEditingController contactInfoController = TextEditingController();
-  TextEditingController datePicker = TextEditingController();
+  TextEditingController startDatePicker = TextEditingController();
+  TextEditingController currentDatePicker = TextEditingController();
 
   Future<DateTime?> _showDatePicker(){
     return showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2000),
-        lastDate: DateTime(2099),
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2099),
     );
   }
 
@@ -35,6 +36,10 @@ class _TenantDetailState extends State<TenantDetail> {
     String priority = value == 1 ?  _paymentStatus[0] : _paymentStatus[1];
 
     return priority;
+  }
+
+  int updateStatus(String value){
+    return value == 'Payed' ? widget.tenant.status = 1 : value == 'Not Payed' ? widget.tenant.status = 3 : widget.tenant.status = 2;
   }
 
   Column status(String title, int value){
@@ -60,7 +65,7 @@ class _TenantDetailState extends State<TenantDetail> {
                 value: getStatusAsString(value),
                 onChanged: (valueSelectedByUser) {
                   setState(() {
-
+                    updateStatus(valueSelectedByUser!);
                   });
                 },
               ),
@@ -103,8 +108,8 @@ class _TenantDetailState extends State<TenantDetail> {
 
     nameController.text = widget.tenant.name;
     contactInfoController.text = widget.tenant.contactInfo;
-    datePicker.text = DateFormat('yyyy-MM-dd').format(widget.tenant.startDate);
-
+    startDatePicker.text = DateFormat('yyyy-MM-dd').format(widget.tenant.startDate);
+    currentDatePicker.text = DateFormat('yyyy-MM-dd').format(widget.tenant.currentDate);
 
     return Scaffold(
       appBar: AppBar(
@@ -163,10 +168,10 @@ class _TenantDetailState extends State<TenantDetail> {
             Padding(
                 padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: TextField(
-                    controller: datePicker,
+                    controller: startDatePicker,
                     style: Theme.of(context).textTheme.titleSmall,
                     decoration: InputDecoration(
-                        labelText: 'Starting Date',
+                        labelText: 'Date Started to live',
                         labelStyle: Theme.of(context).textTheme.titleSmall,
                         icon: Icon(Icons.calendar_today_rounded
                       ),
@@ -176,10 +181,34 @@ class _TenantDetailState extends State<TenantDetail> {
 
                       if(pickedDate != null){
                         setState(() {
-                          datePicker.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                          startDatePicker.text = DateFormat('yyyy-MM-dd').format(pickedDate);
                           widget.tenant.startDate = pickedDate;
                         });
                       }
+                  },
+                )
+            ),
+
+            Padding(
+                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                child: TextField(
+                  controller: currentDatePicker,
+                  style: Theme.of(context).textTheme.titleSmall,
+                  decoration: InputDecoration(
+                    labelText: 'Current Date to Pay',
+                    labelStyle: Theme.of(context).textTheme.titleSmall,
+                    icon: Icon(Icons.calendar_today_rounded
+                    ),
+                  ),
+                  onTap: () async {
+                    DateTime? pickedDate = await _showDatePicker();
+
+                    if(pickedDate != null){
+                      setState(() {
+                        currentDatePicker.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                        widget.tenant.currentDate = pickedDate;
+                      });
+                    }
                   },
                 )
             ),
