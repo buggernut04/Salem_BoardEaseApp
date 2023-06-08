@@ -1,4 +1,4 @@
-import 'package:boardease_application/auxiliary/root_app.dart';
+import 'package:boardease_application/components/root_app.dart';
 import 'package:flutter/material.dart';
 
 

@@ -1,10 +1,12 @@
+import 'package:boardease_application/classes/model/ownerpayment.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 
-import '../classes/tenant.dart';
+import '../classes/model/tenant.dart';
+import '../classes/model/tenantpayment.dart';
 
 class DatabaseHelper {
 
@@ -152,21 +154,90 @@ class DatabaseHelper {
   }
 
   // TENANT PAYMENT SECTION
+  Future<int?> insertTPayment(TenantPayment tPayment) async{
+    Database? db = await databaseHelper.database;
 
+    var result = await db?.insert(tenantPaymentTable, tPayment.toMap());
 
+    return result;
+  }
+
+  Future<int?> updateTPayment(TenantPayment tPayment) async{
+    Database? db = await databaseHelper.database;
+
+    var result = await db?.update(tenantPaymentTable, tPayment.toMap(), where: '$colId = ?', whereArgs: [tPayment.id]);
+
+    return result;
+  }
+
+  Future<int?> deleteTPayment(int? id) async{
+    Database? db = await databaseHelper.database;
+
+    int? result = await db?.delete(tenantPaymentTable, where: '$colId = $id');
+
+    return result;
+  }
+
+  Future<List<TenantPayment>> getTPaymentList() async{
+    Database? db = await databaseHelper.database;
+    var tPayment = await db?.query(tenantPaymentTable);
+
+    List<TenantPayment>? tPaymentList = tPayment != null ? tPayment.map((e) => TenantPayment.fromMapObject(e)).toList() : [];
+
+    return tPaymentList;
+  }
 
   // OWNER PAYMENT SECTION
+  Future<int?> insertWPayment(OwnerPayment wPayment) async{
+    Database? db = await databaseHelper.database;
+
+    var result = await db?.insert(ownerPaymentTable, wPayment.toMap());
+
+    return result;
+  }
+
+  Future<int?> updateWPayment(OwnerPayment wPayment) async{
+    Database? db = await databaseHelper.database;
+
+    var result = await db?.update(ownerPaymentTable, wPayment.toMap(), where: '$colId = ?', whereArgs: [wPayment.id]);
+
+    return result;
+  }
+
+  Future<int?> deleteWPayment(int? id) async{
+    Database? db = await databaseHelper.database;
+
+    int? result = await db?.delete(ownerPaymentTable, where: '$colId = $id');
+
+    return result;
+  }
+
+  Future<List<OwnerPayment>> getWPaymentList() async{
+    Database? db = await databaseHelper.database;
+    var wPayment = await db?.query(ownerPaymentTable);
+
+    List<OwnerPayment>? wPaymentList = wPayment != null ? wPayment.map((e) => OwnerPayment.fromMapObject(e)).toList() : [];
+
+    return wPaymentList;
+  }
 
   // to be deleted functions
+
   void deleteTable() async {
     Database? db = await databaseHelper.database;
 
-    await db?.execute('DROP TABLE IF EXISTS $tenantTable');
+    //await db?.execute('DROP TABLE IF EXISTS $tenantTable');
+    //await db?.execute('DROP TABLE IF EXISTS $tenantPaymentTable');
+    await db?.execute('DROP TABLE IF EXISTS $ownerPaymentTable');
   }
 
   void createTable() async{
     Database? db = await databaseHelper.database;
 
-    await db?.execute('CREATE TABLE $tenantTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT, $colContactInfo TEXT, $colStartDate TEXT,$colCurrentDate TEXT, $colStatus INTEGER)');
+    //await db?.execute('CREATE TABLE $tenantTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT, $colContactInfo TEXT, $colStartDate TEXT,$colCurrentDate TEXT, $colStatus INTEGER)');
+
+    //await db?.execute('CREATE TABLE $tenantPaymentTable($colTPaymentId INTEGER PRIMARY KEY AUTOINCREMENT, $colTPaymentName TEXT, $colTPaymentAmount INTEGER, $colTPaymentIsPayed INTEGER)');
+
+    await db?.execute('CREATE TABLE $ownerPaymentTable($colWPaymentId INTEGER PRIMARY KEY AUTOINCREMENT, $colWPaymentName TEXT, $colWPaymentAmount INTEGER, $colWPaymentDatePayed TEXT)');
   }
 }

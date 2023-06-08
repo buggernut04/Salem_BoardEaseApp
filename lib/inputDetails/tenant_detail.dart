@@ -2,7 +2,7 @@ import 'package:boardease_application/database/databasehelper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../classes/tenant.dart';
+import '../classes/model/tenant.dart';
 
 class TenantDetail extends StatefulWidget {
   const TenantDetail({Key? key, required this.appBarTitle, required this.tenant}) : super(key: key);
@@ -128,7 +128,6 @@ class _TenantDetailState extends State<TenantDetail> {
         padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
         child: ListView(
           children: <Widget>[
-
               Padding(
               padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: TextField(

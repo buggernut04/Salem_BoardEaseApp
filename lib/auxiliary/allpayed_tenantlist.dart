@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../classes/tenant.dart';
+import '../classes/model/tenant.dart';
 import '../database/databasehelper.dart';
 
 class AllPayedTenants extends StatefulWidget {

@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:boardease_application/classes/tenant.dart';
+import 'package:boardease_application/classes/model/tenant.dart';
 import 'package:boardease_application/database/databasehelper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../auxiliary/tenant_detail.dart';
+import '../inputDetails/tenant_detail.dart';
 
 class TenantList extends StatefulWidget {
   const TenantList({Key? key}) : super(key: key);

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../components/homepage.dart';
-import '../components/payment_analysis.dart';
-import '../components/payment_setup.dart';
-import '../components/tenant_list.dart';
+import 'homepage.dart';
+import 'payment_analysis.dart';
+import 'payment_setup.dart';
+import 'tenant_list.dart';
 
 class RootApp extends StatefulWidget {
   const RootApp({Key? key}) : super(key: key);

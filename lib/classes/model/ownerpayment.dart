@@ -1,4 +1,4 @@
-import 'package:boardease_application/classes/payment.dart';
+import 'package:boardease_application/classes/model/payment.dart';
 
 class OwnerPayment extends Payment{
 

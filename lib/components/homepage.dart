@@ -1,4 +1,4 @@
-import 'package:boardease_application/auxiliary/allpayed_tenants.dart';
+import 'package:boardease_application/auxiliary/allpayed_tenantlist.dart';
 import 'package:flutter/material.dart';
 import '../auxiliary/recordbar.dart';
 import '../database/databasehelper.dart';
@@ -15,7 +15,6 @@ class _MyHomePageState extends State<MyHomePage> {
   int _allTenantsPayed = 0;
   int _allTenantsNotFullyPayed = 0;
   int _allTenantsNotPayed = 0;
-
 
   void _fetchPayedTenantCount() {
     DatabaseHelper.databaseHelper.getPayedTenantNum().then((count) {
@@ -57,6 +56,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    //DatabaseHelper.databaseHelper.createTable();
+    //DatabaseHelper.databaseHelper.deleteTable();
+
     return Scaffold(
           backgroundColor: Colors.blue[300] ,
           appBar: AppBar(
