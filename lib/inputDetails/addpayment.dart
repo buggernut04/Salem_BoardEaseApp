@@ -108,7 +108,7 @@ class _AddPaymentState extends State<AddPayment> {
                     Navigator.of(context).pop(); // Close the dialog
                   },
                   child: const Text(
-                    'SAVE',
+                    'ADD',
                     textScaleFactor: 1.5,
                     style: TextStyle(
                       color: Colors.blue,
@@ -121,21 +121,17 @@ class _AddPaymentState extends State<AddPayment> {
                 margin: const EdgeInsets.only(top: 1),
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 width: double.infinity,
-                child: Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
-                      },
-                      child: const Text(
-                        'CANCEL',
-                        textScaleFactor: 1.5,
-                        style: TextStyle(
-                          color: Colors.blue,
-                        ),
-                      ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                  child: const Text(
+                    'CANCEL',
+                    textScaleFactor: 1.5,
+                    style: TextStyle(
+                      color: Colors.blue,
                     ),
-                  ],
+                  ),
                 ),
               ),
             ],

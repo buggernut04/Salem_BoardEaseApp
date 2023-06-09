@@ -59,7 +59,7 @@ class _TenantDetailState extends State<TenantDetail> {
                   child: Text(dropDownStringItem),
                 )
                 ).toList(),
-                style: TextStyle(
+                style: const TextStyle(
                     color: Colors.black
                 ),
                 value: getStatusAsString(value),
@@ -228,7 +228,7 @@ class _TenantDetailState extends State<TenantDetail> {
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(foregroundColor: Colors.white70
                           ),
-                          child: Text(
+                          child: const Text(
                               'Save',
                               textScaleFactor: 1.5,
                               style: TextStyle(
@@ -237,6 +237,7 @@ class _TenantDetailState extends State<TenantDetail> {
                           ),
                           onPressed: () {
                             saveTenant();
+                            widget.tenant.updateStatusAndDate();
                             Navigator.pop(context, true);
                           },
                         )

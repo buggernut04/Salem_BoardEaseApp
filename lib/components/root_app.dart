@@ -65,21 +65,6 @@ class _RootAppState extends State<RootApp> {
     );
   }
 
-  /*AnimatedBottomNavigationBar(
-  activeColor: Colors.blue,
-  splashColor: Colors.blueAccent,
-  inactiveColor: Colors.black.withOpacity(0.8),
-  icons: iconItems,
-  activeIndex: _currentIndex,
-  gapLocation: GapLocation.none,
-  notchSmoothness: NotchSmoothness.smoothEdge,
-  leftCornerRadius: 10,
-  iconSize: 25,
-  rightCornerRadius: 10,
-  onTap: (index) {
-  selectedTab(index);
-  },*/
-
   selectedTab(index) {
     setState(() {
       _currentIndex = index;

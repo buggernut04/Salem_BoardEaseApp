@@ -26,45 +26,103 @@ class _EditDeleteTenantPaymentState extends State<EditDeleteTenantPayment> {
     result != 0 ? debugPrint('Success') : debugPrint('Fail');
   }
 
-  void removeTPayment(TenantPayment tPay) async {
-    await DatabaseHelper.databaseHelper.deleteTPayment(tPay.id);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          icon: const Icon(Icons.edit),
+
+    pName.text = widget.tenantPayment.paymentName;
+    amount.text = widget.tenantPayment.amount.toString();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.tenantPayment.paymentName),
+        centerTitle: true,
+        backgroundColor: Colors.blue[300],
+        elevation: 0.0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
           onPressed: () {
-            openDialog().then((shouldUpdate) {
-              if (shouldUpdate) {
-                setState(() {
-                  // Update the values of the tenantPayment
-                  widget.tenantPayment.paymentName = pName.text;
+            Navigator.pop(context, true);
+          },
+        ),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+
+          Container(
+            padding: const EdgeInsets.symmetric(vertical:10, horizontal: 10),
+            child: TextField(
+              controller: pName,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter Payment Name',
+              ),
+              onChanged: (value){
+                widget.tenantPayment.paymentName = pName.text;
+              },
+            ),
+          ),
+
+          const SizedBox(height: 10.0),
+
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: TextField(
+              controller: amount,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter Amount',
+              ),
+              onChanged: (value){
                   widget.tenantPayment.amount = int.tryParse(amount.text) ?? 0;
-                });
-              }
-            });
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.delete),
-          onPressed: () {
-            removeTPayment(widget.tenantPayment);
-          },
-        ),
-      ],
+              },
+            ),
+          ),
+
+          Container(
+            margin: const EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                saveTPayment();
+                Navigator.pop(context, true);
+              },
+              child: const Text(
+                'SAVE',
+                textScaleFactor: 1.5,
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ),
+
+          Container(
+            margin: const EdgeInsets.only(top: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(false); // Close the dialog
+              },
+              child: const Text(
+                'CANCEL',
+                textScaleFactor: 1.5,
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Future openDialog() => showDialog(
     context: context,
     builder: (context) {
-
-      pName.text = widget.tenantPayment.paymentName;
-      amount.text = widget.tenantPayment.amount.toString();
 
       return Dialog(
         child: SizedBox(

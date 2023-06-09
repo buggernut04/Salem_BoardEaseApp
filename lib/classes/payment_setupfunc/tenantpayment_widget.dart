@@ -19,14 +19,16 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
 
   List<TextEditingController> tPaymentController = [];
 
-  void saveTPayment(TenantPayment tenantPay) async {
+  void saveTPayment(TenantPayment tenantPayment) async {
     int? result;
 
-    if(tenantPay.id != null){
-      result = await DatabaseHelper.databaseHelper.updateTPayment(tenantPay);
-    }
+    result = await DatabaseHelper.databaseHelper.insertTPayment(tenantPayment);
 
     result != 0 ? debugPrint('Success') : debugPrint('Fail');
+  }
+
+  void removeTPayment(TenantPayment tPay) async {
+    await DatabaseHelper.databaseHelper.deleteTPayment(tPay.id);
   }
 
   void updateTPaymentListView(){
@@ -53,18 +55,18 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
     });
   }
 
-  /*void route(TenantPayment tPay) async{
+  void route(TenantPayment tPay) async{
     bool result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) {
-          return AddPayment(tenantPayment: tPay);
+          return EditDeleteTenantPayment(tenantPayment: tPay);
         })
     );
+
     if(result){
       updateTPaymentListView();
     }
-
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +116,23 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
                         ),
                       ),
                     ),
-                    trailing: EditDeleteTenantPayment(tenantPayment: tPayment[position]),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () {
+                            route(tPayment[position]);
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete),
+                          onPressed: () {
+                            removeTPayment(tPayment[position]);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 );
               } else {
