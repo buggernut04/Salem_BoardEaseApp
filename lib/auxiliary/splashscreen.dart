@@ -19,7 +19,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   startTimer() {
-    var duration = const Duration(seconds: 5);
+    var duration = const Duration(seconds: 6);
     return Timer(duration, route);
   }
 
@@ -56,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 fit: BoxFit.contain,
               ),
             ),
-            SizedBox(height: 0),
+
             FutureBuilder(
                 builder: (BuildContext context, AsyncSnapshot snapshot){
                   if(snapshot.connectionState == ConnectionState.waiting) {
@@ -76,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           style: TextStyle(
                             fontFamily: 'Arial',
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                            fontSize: 23,
                           ),
                         ),
                       )

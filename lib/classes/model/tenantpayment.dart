@@ -23,4 +23,12 @@ class TenantPayment extends Payment{
     amount: json['amount'],
     isPayed: json['isPayed'],
   );
+
+  /*@override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is TenantPayment && runtimeType == other.runtimeType && paymentName == other.paymentName;
+
+  @override
+  int get hashCode => id.hashCode ^ paymentName.hashCode;*/
 }

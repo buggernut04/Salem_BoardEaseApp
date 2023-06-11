@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:boardease_application/auxiliary/tenant_status.dart';
+import 'package:boardease_application/inputDetails/tenant_status.dart';
 import 'package:boardease_application/classes/model/tenant.dart';
 import 'package:boardease_application/database/databasehelper.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,23 @@ class _TenantListState extends State<TenantList> {
   List<Tenant> tenants = [];
   int count = 0;
 
-  void routeToAddDelete(Tenant tenant, String title) async {
+  void updateListView(){
+    final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
+
+    dbFuture.then((database){
+      Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
+      tenantListFuture.then((tenants){
+        if(mounted) {
+          setState(() {
+            this.tenants = tenants;
+            count = tenants.length;
+          });
+        }
+      });
+    });
+  }
+
+  void routeToTenantDetail(Tenant tenant, String title) async {
    bool result =  await Navigator.push(
        context,
         MaterialPageRoute(builder: (context) {
@@ -32,7 +48,7 @@ class _TenantListState extends State<TenantList> {
    }
   }
 
-  void routeToTPayment(Tenant tenant) async {
+  void routeToTenantStatus(Tenant tenant) async {
     bool result =  await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) {
@@ -50,22 +66,6 @@ class _TenantListState extends State<TenantList> {
     if(result != 0){
       showSnackBar(context, 'Tenant Removed');
     }
-  }
-
-  void updateListView(){
-    final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
-
-    dbFuture.then((database){
-      Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
-      tenantListFuture.then((tenants){
-        if(mounted) {
-          setState(() {
-            this.tenants = tenants;
-            count = tenants.length;
-          });
-        }
-      });
-    });
   }
 
   @override
@@ -90,7 +90,7 @@ class _TenantListState extends State<TenantList> {
                           elevation: 2.0,
                           child: ListTile(
                             onTap: () {
-                              routeToTPayment(tenants[position]);
+                              routeToTenantStatus(tenants[position]);
                             },
                             leading: CircleAvatar(
                               backgroundColor: getStatusColor(this.tenants[position].status),
@@ -116,7 +116,7 @@ class _TenantListState extends State<TenantList> {
                                 IconButton(
                                   icon: const Icon(Icons.edit),
                                   onPressed: () {
-                                    routeToAddDelete(tenants[position], 'Edit Tenant');
+                                    routeToTenantDetail(tenants[position], 'Edit Tenant');
                                   },
                                 ),
                                 IconButton(
@@ -127,6 +127,7 @@ class _TenantListState extends State<TenantList> {
                                 ),
                               ],
                             ),
+                            dense: true,
                           )
                       )
                   );
@@ -134,7 +135,7 @@ class _TenantListState extends State<TenantList> {
             ),
             floatingActionButton: FloatingActionButton(
                 onPressed: () {
-                  routeToAddDelete(Tenant(name: '', contactInfo: '', status: 3, startDate: DateTime.now(), currentDate: DateTime.now()), 'Add Tenant');
+                  routeToTenantDetail(Tenant(name: '', contactInfo: '', status: 3, startDate: DateTime.now(), currentDate: DateTime.now(), tenantPayment: []), 'Add Tenant');
                 },
               backgroundColor: Colors.blueAccent,
               child: const Icon(

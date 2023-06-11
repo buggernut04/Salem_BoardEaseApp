@@ -1,6 +1,8 @@
+import 'package:boardease_application/classes/model/tenantpayment.dart';
 import 'package:boardease_application/database/databasehelper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../classes/model/tenant.dart';
 
@@ -16,10 +18,17 @@ class TenantDetail extends StatefulWidget {
 
 class _TenantDetailState extends State<TenantDetail> {
 
+  List<TenantPayment> tenantPayments = [];
+
   TextEditingController nameController = TextEditingController();
   TextEditingController contactInfoController = TextEditingController();
   TextEditingController startDatePicker = TextEditingController();
-  TextEditingController currentDatePicker = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    getAllTPaymentList();
+  }
 
   Future<DateTime?> _showDatePicker(){
     return showDatePicker(
@@ -30,50 +39,18 @@ class _TenantDetailState extends State<TenantDetail> {
     );
   }
 
-  final _paymentStatus = ['Payed', 'Not Payed'];
+  void getAllTPaymentList() {
+    final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
 
-  String getStatusAsString(int value){
-    String priority = value == 1 ?  _paymentStatus[0] : _paymentStatus[1];
-
-    return priority;
-  }
-
-  int updateStatus(String value){
-    return value == 'Payed' ? widget.tenant.status = 1 : value == 'Not Payed' ? widget.tenant.status = 3 : widget.tenant.status = 2;
-  }
-
-  Column status(String title, int value){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleSmall,
-        ),
-        ListTile(
-          title: Column(
-            children: <Widget>[
-              DropdownButton(
-                items: _paymentStatus.map((String dropDownStringItem) => DropdownMenuItem<String>(
-                  value: dropDownStringItem,
-                  child: Text(dropDownStringItem),
-                )
-                ).toList(),
-                style: const TextStyle(
-                    color: Colors.black
-                ),
-                value: getStatusAsString(value),
-                onChanged: (valueSelectedByUser) {
-                  setState(() {
-                    updateStatus(valueSelectedByUser!);
-                  });
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+    dbFuture.then((database){
+      Future<List<TenantPayment>> tPaymentListFuture = DatabaseHelper.databaseHelper.getTPaymentList();
+      tPaymentListFuture.then((tPayments){
+          setState(() {
+            //debugPrint('${()}')
+            widget.tenant.tenantPayment = tPayments;
+          });
+      });
+    });
   }
 
   // remove a tenant
@@ -97,6 +74,10 @@ class _TenantDetailState extends State<TenantDetail> {
     if(widget.tenant.id != null){
       result = await DatabaseHelper.databaseHelper.updateTenant(widget.tenant);
     } else{
+      // If when the tenant will start to live, that is also the day he will start his/her payment.
+      // Base on my stakeholder advise
+      widget.tenant.currentDate = widget.tenant.startDate;
+
       result = await DatabaseHelper.databaseHelper.insertTenant(widget.tenant);
     }
 
@@ -108,8 +89,8 @@ class _TenantDetailState extends State<TenantDetail> {
 
     nameController.text = widget.tenant.name;
     contactInfoController.text = widget.tenant.contactInfo;
-    startDatePicker.text = DateFormat('yyyy-MM-dd').format(widget.tenant.startDate);
-    currentDatePicker.text = DateFormat('yyyy-MM-dd').format(widget.tenant.currentDate);
+    startDatePicker.text = startDatePicker.text = DateFormat.yMMMd().format(widget.tenant.startDate);
+
 
     return Scaffold(
       appBar: AppBar(
@@ -125,11 +106,11 @@ class _TenantDetailState extends State<TenantDetail> {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
+        padding: const EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
         child: ListView(
           children: <Widget>[
               Padding(
-              padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+              padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: TextField(
                   controller: nameController,
                   style: Theme.of(context).textTheme.titleSmall,
@@ -137,8 +118,8 @@ class _TenantDetailState extends State<TenantDetail> {
                     widget.tenant.name = nameController.text;
                   },
                   decoration: InputDecoration(
-                      labelText: 'Name',
                       labelStyle: Theme.of(context).textTheme.titleSmall,
+                      hintText: 'Enter Tenant Name',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0)
                       )
@@ -147,40 +128,47 @@ class _TenantDetailState extends State<TenantDetail> {
             ),
 
             Padding(
-                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: TextField(
                   controller: contactInfoController,
+                  keyboardType: TextInputType.number,
                   style: Theme.of(context).textTheme.titleSmall,
                   onChanged: (value){
                     widget.tenant.contactInfo = contactInfoController.text;
                   },
                   decoration: InputDecoration(
-                      labelText: 'Contact Number',
                       labelStyle: Theme.of(context).textTheme.titleSmall,
+                      hintText: 'Enter Contact Number',
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0)
+                          borderRadius: BorderRadius.circular(5.0),
                       )
                   ),
                 )
             ),
 
             Padding(
-                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                padding: const EdgeInsets.only(top: 15.0, bottom: 15.0),
                 child: TextField(
                     controller: startDatePicker,
                     style: Theme.of(context).textTheme.titleSmall,
                     decoration: InputDecoration(
-                        labelText: 'Date Started to live',
+                        labelText: 'Date Started To Live',
                         labelStyle: Theme.of(context).textTheme.titleSmall,
-                        icon: Icon(Icons.calendar_today_rounded
-                      ),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0)
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.calendar_today, // Replace with the desired icon
+                          color:Colors.grey, // Customize the icon color if needed
+                        ),
                     ),
+
                     onTap: () async {
                       DateTime? pickedDate = await _showDatePicker();
 
                       if(pickedDate != null){
                         setState(() {
-                          startDatePicker.text = DateFormat('yyyy-MM-dd').format(pickedDate);
+                          startDatePicker.text = DateFormat.yMMMd().format(pickedDate);
                           widget.tenant.startDate = pickedDate;
                         });
                       }
@@ -188,40 +176,11 @@ class _TenantDetailState extends State<TenantDetail> {
                 )
             ),
 
-            Padding(
-                padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                child: TextField(
-                  controller: currentDatePicker,
-                  style: Theme.of(context).textTheme.titleSmall,
-                  decoration: InputDecoration(
-                    labelText: 'Current Date to Pay',
-                    labelStyle: Theme.of(context).textTheme.titleSmall,
-                    icon: Icon(Icons.calendar_today_rounded
-                    ),
-                  ),
-                  onTap: () async {
-                    DateTime? pickedDate = await _showDatePicker();
-
-                    if(pickedDate != null){
-                      setState(() {
-                        currentDatePicker.text = DateFormat('yyyy-MM-dd').format(pickedDate);
-                        widget.tenant.currentDate = pickedDate;
-                      });
-                    }
-                  },
-                )
-            ),
-
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(top: 10.0, bottom: 10.0),),
 
-            status('Rental Fee', widget.tenant.status),
-            status('Water Bill', widget.tenant.status),
-            status('Electric Bill', widget.tenant.status),
-            status('Additional Payment', widget.tenant.status),
-
             Padding(
-                padding: EdgeInsets.only(top: 13.0, bottom: 13.0),
+                padding: const EdgeInsets.only(top: 13.0, bottom: 13.0),
                 child: Row(
                   children: <Widget>[
                     Expanded(
@@ -237,7 +196,6 @@ class _TenantDetailState extends State<TenantDetail> {
                           ),
                           onPressed: () {
                             saveTenant();
-                            widget.tenant.updateStatusAndDate();
                             Navigator.pop(context, true);
                           },
                         )
@@ -250,7 +208,7 @@ class _TenantDetailState extends State<TenantDetail> {
                           style: ElevatedButton.styleFrom(foregroundColor: Colors.white70),
                           child: Text( widget.appBarTitle == 'Add Tenant' ? 'Cancel' : 'Remove',
                             textScaleFactor: 1.5,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 color: Colors.blue
                             ),
                           ),

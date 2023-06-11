@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../database/databasehelper.dart';
-import '../../inputDetails/addpayment.dart';
+import '../../dialogBox/addpayment.dart';
 import '../model/ownerpayment.dart';
 
 class OwnerPaymentWidget extends StatefulWidget {

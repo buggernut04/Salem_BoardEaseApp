@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../database/databasehelper.dart';
-import '../../inputDetails/addpayment.dart';
+import '../../dialogBox/addpayment.dart';
 import '../model/tenantpayment.dart';
 
 class TenantPaymentWidget extends StatefulWidget {
@@ -84,7 +84,7 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
     if (tPaymentController.length < count) {
       for (int i = tPaymentController.length; i < count; i++) {
         tPaymentController.add(TextEditingController(
-          text: tPayment[i].amount.toString(),
+          text: tPayment[i].amount == 0 ? null : tPayment[i].amount.toString(),
         ));
       }
     }

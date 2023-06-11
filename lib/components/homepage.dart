@@ -1,6 +1,8 @@
 import 'package:boardease_application/auxiliary/allpayed_tenantlist.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import '../auxiliary/recordbar.dart';
+import '../classes/model/tenant.dart';
 import '../database/databasehelper.dart';
 
 class MyHomePage extends StatefulWidget    {
@@ -12,46 +14,52 @@ class MyHomePage extends StatefulWidget    {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  int _allTenantsPayed = 0;
-  int _allTenantsNotFullyPayed = 0;
-  int _allTenantsNotPayed = 0;
+  List<Tenant> tenants = [];
 
-  void _fetchPayedTenantCount() {
-    DatabaseHelper.databaseHelper.getPayedTenantNum().then((count) {
-      if(mounted) {
-        setState(() {
-          _allTenantsPayed = count!.toInt();
-        });
-      }
-    });
-  }
+  void getAllTenants(){
+    final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
 
-  void _fetchNotFullyPayedTenantCount() {
-    DatabaseHelper.databaseHelper.getNotFullyPayedTenantNum().then((count) {
-      if(mounted) {
-        setState(() {
-          _allTenantsNotFullyPayed = count!.toInt();
-        });
-      }
-    });
-  }
-
-  void _fetchNotPayedTenantCount(){
-    DatabaseHelper.databaseHelper.getNotPayedTenantNum().then((count) {
-      if(mounted){
-        setState(() {
-          _allTenantsNotPayed = count!.toInt();
-        });
-      }
+    dbFuture.then((database){
+      Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
+      tenantListFuture.then((tenants){
+        if(mounted) {
+          setState(() {
+            this.tenants = tenants;
+          });
+        }
+      });
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _fetchPayedTenantCount();
-    _fetchNotFullyPayedTenantCount();
-    _fetchNotPayedTenantCount();
+    getAllTenants();
+  }
+
+  int _fetchPayedTenantCount() {
+    return tenants.where((tenant) => tenant.status == 1).length;
+  }
+
+  int _fetchNotFullyPayedTenantCount() {
+    return tenants.where((tenant) => tenant.status == 2).length;
+  }
+
+  int _fetchNotPayedTenantCount() {
+    return tenants.where((tenant) => tenant.status == 3).length;
+  }
+
+  int getTenantsDueInThreeDays(){
+    return tenants.where((tenant) => tenant.isPaymentDueThreeDays() == true).length;
+  }
+
+  int getTenantsDueToday(){
+    return tenants.where((tenant) => tenant.isPaymentDue() == true).length;
+  }
+
+  Icon setIcon(){
+    debugPrint('${(getTenantsDueToday())}');
+    return getTenantsDueInThreeDays() != 0 ||  getTenantsDueToday() != 0 ? const Icon(Icons.notifications_active, color: Colors.red) : const Icon(Icons.notifications_none);
   }
 
   @override
@@ -67,9 +75,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 'BoardEase',
               style: TextStyle(fontSize: 23),
             ),
-            centerTitle: true,
-            backgroundColor: Colors.blue[300],
+            centerTitle: false,
+            backgroundColor: Colors.lightBlueAccent,
             elevation: 0.0,
+            actions: [
+              IconButton(
+                  onPressed: (){},
+                  icon: setIcon(),
+              )
+            ] ,
           ),
           body: Container(
             height: 800,
@@ -83,6 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             child: Column(
               children: <Widget>[
+
                 Padding(
                   padding: const EdgeInsets.only(left: 30, top: 30),
                   child: Row(
@@ -108,19 +123,19 @@ class _MyHomePageState extends State<MyHomePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                'Payed: ${(_allTenantsPayed)}',
+                                'Payed: ${(_fetchPayedTenantCount())}',
                                 style: const TextStyle(
                                   fontSize: 18.0,
                                 ),
                               ),
                               Text(
-                                'Not Fully Payed: ${(_allTenantsNotFullyPayed)}',
+                                'Not Fully Payed: ${(_fetchNotFullyPayedTenantCount())}',
                                 style: const TextStyle(
                                   fontSize: 18.0,
                                 ),
                               ),
                               Text(
-                                'Not Payed: ${(_allTenantsNotPayed)}',
+                                'Not Payed: ${(_fetchNotPayedTenantCount())}',
                                 style: const TextStyle(
                                   fontSize: 18.0,
                                 ),

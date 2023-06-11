@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:boardease_application/classes/model/tenantpayment.dart';
+
 class Tenant{
 
   int? id;
@@ -6,9 +10,9 @@ class Tenant{
   int status;
   DateTime startDate;
   DateTime currentDate;
+  List<TenantPayment> tenantPayment;
 
-  Tenant({this.id, required this.name, required this.contactInfo,required this.status, required this.startDate, required this.currentDate});
-
+  Tenant({this.id, required this.name, required this.contactInfo,required this.status, required this.startDate, required this.currentDate, required this.tenantPayment});
 
   void updateStatusAndDate() {
     if (status == 1) {
@@ -26,12 +30,12 @@ class Tenant{
 
   bool isPaymentDueThreeDays() {
     final daysRemaining = currentDate.difference(DateTime.now()).inDays;
-    return daysRemaining <= 3;
+    return daysRemaining <= 3 && daysRemaining >= 1;
   }
 
-  bool isPaymentDueToday() {
+  bool isPaymentDue() {
     final daysRemaining = currentDate.difference(DateTime.now()).inDays;
-    return daysRemaining == 0;
+    return daysRemaining <= 0;
   }
 
   // Convert a Tenant object into a Map Object
@@ -43,6 +47,7 @@ class Tenant{
       'startDate': startDate.toIso8601String(),
       'currentDate': currentDate.toIso8601String(),
       'status': status,
+      'tenantPayment': jsonEncode(tenantPayment.map((payment) => payment.toMap()).toList()),
     };
   }
 
@@ -54,5 +59,7 @@ class Tenant{
       startDate: DateTime.parse(json['startDate']),
       currentDate: DateTime.parse(json['currentDate']),
       status: json['status'],
+      tenantPayment: List<TenantPayment>.from(
+      jsonDecode(json['tenantPayment']).map((paymentJson) => TenantPayment.fromMapObject(paymentJson))),
     );
 }

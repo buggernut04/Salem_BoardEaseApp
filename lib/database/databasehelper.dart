@@ -22,6 +22,7 @@ class DatabaseHelper {
   String colStartDate = 'startDate';
   String colCurrentDate = 'currentDate';
   String colStatus = 'status';
+  String colTenantPayment = 'tenantPayment';
 
   // tenants payment
   String tenantPaymentTable = 'tenantPayment_table';
@@ -57,7 +58,7 @@ class DatabaseHelper {
   }
 
   void _createDb(Database db, int newVersion) async{
-    await db.execute('CREATE TABLE $tenantTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT, $colContactInfo TEXT, $colStartDate TEXT, $colCurrentDate TEXT, $colStatus INTEGER)');
+    await db.execute('CREATE TABLE $tenantTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT, $colContactInfo TEXT, $colStartDate TEXT, $colCurrentDate TEXT, $colStatus INTEGER, $colTenantPayment BLOB)');
 
     await db.execute('CREATE TABLE $tenantPaymentTable($colTPaymentId INTEGER PRIMARY KEY AUTOINCREMENT, $colTPaymentName TEXT, $colTPaymentAmount INTEGER, $colTPaymentIsPayed INTEGER)');
 
@@ -111,46 +112,6 @@ class DatabaseHelper {
     List<Tenant>? tenantList = tenant != null ? tenant.map((e) => Tenant.fromMapObject(e)).toList() : [];
 
     return tenantList;
-  }
-
-  // Get number of all tenants in the database
-  Future<int?> getAllTenantNum() async{
-    Database? db = await databaseHelper.database;
-
-    List<Map<String, dynamic>>? x = await db?.rawQuery('SELECT COUNT (*) from $tenantTable');
-    
-    int? result = Sqflite.firstIntValue(x!);
-    return result;
-  }
-
-  // Get number of all tenants that already payed
-  Future<int?> getPayedTenantNum() async{
-    Database? db = await databaseHelper.database;
-
-    List<Map<String, dynamic>>? x = await db?.rawQuery('SELECT COUNT (*) from $tenantTable where $colStatus = 1');
-
-    int? result = Sqflite.firstIntValue(x!);
-    return result;
-  }
-
-  // Get number of all tenants that are not fully payed
-  Future<int?> getNotFullyPayedTenantNum() async{
-    Database? db = await databaseHelper.database;
-
-    List<Map<String, dynamic>>? x = await db?.rawQuery('SELECT COUNT (*) from $tenantTable where $colStatus = 2');
-
-    int? result = Sqflite.firstIntValue(x!);
-    return result;
-  }
-
-  // Get number of all tenants that not yet payed
-  Future<int?> getNotPayedTenantNum() async{
-    Database? db = await databaseHelper.database;
-
-    List<Map<String, dynamic>>? x = await db?.rawQuery('SELECT COUNT (*) from $tenantTable where $colStatus = 3');
-
-    int? result = Sqflite.firstIntValue(x!);
-    return result;
   }
 
   // TENANT PAYMENT SECTION
@@ -226,18 +187,18 @@ class DatabaseHelper {
   void deleteTable() async {
     Database? db = await databaseHelper.database;
 
-    //await db?.execute('DROP TABLE IF EXISTS $tenantTable');
-    //await db?.execute('DROP TABLE IF EXISTS $tenantPaymentTable');
-    await db?.execute('DROP TABLE IF EXISTS $ownerPaymentTable');
+    await db?.execute('DROP TABLE IF EXISTS $tenantTable');
+    await db?.execute('DROP TABLE IF EXISTS $tenantPaymentTable');
+    //await db?.execute('DROP TABLE IF EXISTS $ownerPaymentTable');
   }
 
   void createTable() async{
     Database? db = await databaseHelper.database;
 
-    //await db?.execute('CREATE TABLE $tenantTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT, $colContactInfo TEXT, $colStartDate TEXT,$colCurrentDate TEXT, $colStatus INTEGER)');
+    await db?.execute('CREATE TABLE $tenantTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colName TEXT, $colContactInfo TEXT, $colStartDate TEXT, $colCurrentDate TEXT, $colStatus INTEGER, $colTenantPayment BLOB)');
 
-    //await db?.execute('CREATE TABLE $tenantPaymentTable($colTPaymentId INTEGER PRIMARY KEY AUTOINCREMENT, $colTPaymentName TEXT, $colTPaymentAmount INTEGER, $colTPaymentIsPayed INTEGER)');
+    await db?.execute('CREATE TABLE $tenantPaymentTable($colTPaymentId INTEGER PRIMARY KEY AUTOINCREMENT, $colTPaymentName TEXT, $colTPaymentAmount INTEGER, $colTPaymentIsPayed INTEGER)');
 
-    await db?.execute('CREATE TABLE $ownerPaymentTable($colWPaymentId INTEGER PRIMARY KEY AUTOINCREMENT, $colWPaymentName TEXT, $colWPaymentAmount INTEGER, $colWPaymentDatePayed TEXT)');
+    //await db?.execute('CREATE TABLE $ownerPaymentTable($colWPaymentId INTEGER PRIMARY KEY AUTOINCREMENT, $colWPaymentName TEXT, $colWPaymentAmount INTEGER, $colWPaymentDatePayed TEXT)');
   }
 }

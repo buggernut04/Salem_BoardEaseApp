@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:sqflite/sqflite.dart';
 
+import '../classes/model/tenant.dart';
 import '../database/databasehelper.dart';
 
 
@@ -13,36 +15,33 @@ class RecordBar extends StatefulWidget {
 
 class _RecordBarState extends State<RecordBar> {
 
-  int _allTenants = 0;
-  int _allTenantsNotPayed = 0;
+  List<Tenant> tenants = [];
+
+  void getAllTenants(){
+    final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
+
+    dbFuture.then((database){
+      Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
+      tenantListFuture.then((tenants){
+        if(mounted) {
+          setState(() {
+            this.tenants = tenants;
+          });
+        }
+      });
+    });
+  }
+
+  int _fetchNotPayedTenantCount() {
+    return tenants.where((tenant) => tenant.status == 3).length;
+  }
 
   @override
   void initState() {
     super.initState();
-    _fetchAllTenantCount();
-    _fetchAllNotPayedTenantCount();
+    getAllTenants();
   }
 
-  @override
-  void dispose(){
-    super.dispose();
-  }
-
-  void _fetchAllTenantCount() {
-    DatabaseHelper.databaseHelper.getAllTenantNum().then((count) {
-      setState(() {
-        _allTenants = count!.toInt();
-      });
-    });
-  }
-
-  void _fetchAllNotPayedTenantCount() {
-    DatabaseHelper.databaseHelper.getNotPayedTenantNum().then((count) {
-      setState(() {
-        _allTenantsNotPayed = count!.toInt();
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +49,8 @@ class _RecordBarState extends State<RecordBar> {
     return CircularPercentIndicator(
       radius: 120.0,
       lineWidth: 20.0,
-      percent: _allTenants == 0 ? 0.0 : _allTenantsNotPayed / _allTenants,
-      center: _allTenantsNotPayed == 0 ? Text('0%') : Text('${(_allTenantsNotPayed / _allTenants * 100).toInt()}%') ,
+      percent: tenants.isEmpty ? 0.0 : _fetchNotPayedTenantCount() / tenants.length,
+      center: tenants.isEmpty ? const Text('0%') : Text('${(_fetchNotPayedTenantCount() / tenants.length * 100).toInt()}%') ,
       animation: true,
       animationDuration: 1500,
       progressColor: Colors.indigo,
