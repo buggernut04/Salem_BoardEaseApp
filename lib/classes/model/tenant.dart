@@ -30,12 +30,21 @@ class Tenant{
 
   bool isPaymentDueThreeDays() {
     final daysRemaining = currentDate.difference(DateTime.now()).inDays;
-    return daysRemaining <= 3 && daysRemaining >= 1;
+    return (status == 2 || status == 3) && daysRemaining <= 3 && daysRemaining >= 1;
   }
 
   bool isPaymentDue() {
     final daysRemaining = currentDate.difference(DateTime.now()).inDays;
-    return daysRemaining <= 0;
+    return (status == 2 || status == 3) && daysRemaining <= 0;
+  }
+
+  void changeStatus(){
+    if(isPaymentDue() && (status == 1 || status == 2)){
+      for (var payment in tenantPayment) {
+        payment.isPayed = 0;
+      }
+      status = 3;
+    }
   }
 
   // Convert a Tenant object into a Map Object

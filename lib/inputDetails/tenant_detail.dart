@@ -1,5 +1,6 @@
 import 'package:boardease_application/classes/model/tenantpayment.dart';
 import 'package:boardease_application/database/databasehelper.dart';
+import 'package:boardease_application/notification_service/notification_body.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
@@ -19,6 +20,7 @@ class TenantDetail extends StatefulWidget {
 class _TenantDetailState extends State<TenantDetail> {
 
   List<TenantPayment> tenantPayments = [];
+  List<Tenant> tenant = [];
 
   TextEditingController nameController = TextEditingController();
   TextEditingController contactInfoController = TextEditingController();
@@ -27,7 +29,7 @@ class _TenantDetailState extends State<TenantDetail> {
   @override
   void initState() {
     super.initState();
-    getAllTPaymentList();
+    getValList();
   }
 
   Future<DateTime?> _showDatePicker(){
@@ -39,7 +41,7 @@ class _TenantDetailState extends State<TenantDetail> {
     );
   }
 
-  void getAllTPaymentList() {
+  void getValList() {
     final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
 
     dbFuture.then((database){
@@ -49,6 +51,17 @@ class _TenantDetailState extends State<TenantDetail> {
             //debugPrint('${()}')
             widget.tenant.tenantPayment = tPayments;
           });
+      });
+    });
+
+    dbFuture.then((database){
+      Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
+      tenantListFuture.then((tenants){
+        if(mounted) {
+          setState(() {
+            tenant = tenants;
+          });
+        }
       });
     });
   }
@@ -74,6 +87,7 @@ class _TenantDetailState extends State<TenantDetail> {
     if(widget.tenant.id != null){
       result = await DatabaseHelper.databaseHelper.updateTenant(widget.tenant);
     } else{
+
       // If when the tenant will start to live, that is also the day he will start his/her payment.
       // Base on my stakeholder advise
       widget.tenant.currentDate = widget.tenant.startDate;
@@ -99,7 +113,7 @@ class _TenantDetailState extends State<TenantDetail> {
         backgroundColor: Colors.blue[300],
         elevation: 0.0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context, true);
           },
@@ -196,6 +210,17 @@ class _TenantDetailState extends State<TenantDetail> {
                           ),
                           onPressed: () {
                             saveTenant();
+
+                            Tenant tenantWithNearestDate = tenant.reduce((a, b) =>
+                            (DateTime.parse(a.currentDate.toString()).difference(DateTime.now()).abs() <
+                                DateTime.parse(b.currentDate.toString()).difference(DateTime.now()).abs())
+                                ? a
+                                : b);
+
+                            debugPrint("${tenantWithNearestDate.currentDate.month}");
+
+                            getTenantNotification(tenantWithNearestDate);
+
                             Navigator.pop(context, true);
                           },
                         )

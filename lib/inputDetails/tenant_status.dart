@@ -18,7 +18,6 @@ class TenantStatus extends StatefulWidget {
 class _TenantStatusState extends State<TenantStatus> {
 
   List<String?> pValues = [];
-  int count = 0 ;
   int indicator = 0;
   //List<TenantPayment> tPayment = [];
 
@@ -38,9 +37,6 @@ class _TenantStatusState extends State<TenantStatus> {
       tPaymentListFuture.then((tPayments){
         if(mounted) {
           setState(() {
-            debugPrint('${(widget.tenant.tenantPayment.length)}');
-            debugPrint('${(tPayments.length)}');
-
             if(widget.tenant.tenantPayment.length <= tPayments.length) {
               for(int i = widget.tenant.tenantPayment.length; i <
                   tPayments.length; i++) {
@@ -66,8 +62,8 @@ class _TenantStatusState extends State<TenantStatus> {
             }
           });
 
-          debugPrint('${(widget.tenant.tenantPayment.length)}');
-          debugPrint('${(tPayments.length)}');
+          /*debugPrint('${(widget.tenant.tenantPayment.length)}');
+          debugPrint('${(tPayments.length)}');*/
         }
       });
     });
@@ -177,8 +173,10 @@ class _TenantStatusState extends State<TenantStatus> {
                                           pValues[position] = newValue;
                                           widget.tenant.tenantPayment[position]
                                               .isPayed = updateStatus(newValue);
-                                          debugPrint('${(widget.tenant.tenantPayment[position].isPayed)}');
+                                          //debugPrint('${(widget.tenant.tenantPayment[position].isPayed)}');
                                           if(widget.tenant.tenantPayment[position].isPayed == 1){
+                                            // put a condition in here
+                                            // ibutang sa save ni nga button jud
                                             indicator++;
                                           }
                                           //await DatabaseHelper.databaseHelper.updateTenant(widget.tenant);

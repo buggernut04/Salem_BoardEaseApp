@@ -16,50 +16,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Tenant> tenants = [];
 
-  void getAllTenants(){
-    final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
-
-    dbFuture.then((database){
-      Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
-      tenantListFuture.then((tenants){
-        if(mounted) {
-          setState(() {
-            this.tenants = tenants;
-          });
-        }
-      });
-    });
-  }
 
   @override
   void initState() {
     super.initState();
     getAllTenants();
-  }
-
-  int _fetchPayedTenantCount() {
-    return tenants.where((tenant) => tenant.status == 1).length;
-  }
-
-  int _fetchNotFullyPayedTenantCount() {
-    return tenants.where((tenant) => tenant.status == 2).length;
-  }
-
-  int _fetchNotPayedTenantCount() {
-    return tenants.where((tenant) => tenant.status == 3).length;
-  }
-
-  int getTenantsDueInThreeDays(){
-    return tenants.where((tenant) => tenant.isPaymentDueThreeDays() == true).length;
-  }
-
-  int getTenantsDueToday(){
-    return tenants.where((tenant) => tenant.isPaymentDue() == true).length;
-  }
-
-  Icon setIcon(){
-    debugPrint('${(getTenantsDueToday())}');
-    return getTenantsDueInThreeDays() != 0 ||  getTenantsDueToday() != 0 ? const Icon(Icons.notifications_active, color: Colors.red) : const Icon(Icons.notifications_none);
   }
 
   @override
@@ -69,21 +30,21 @@ class _MyHomePageState extends State<MyHomePage> {
     //DatabaseHelper.databaseHelper.deleteTable();
 
     return Scaffold(
-          backgroundColor: Colors.blue[300] ,
+          backgroundColor: Colors.blue[300],
           appBar: AppBar(
             title: const Text(
                 'BoardEase',
               style: TextStyle(fontSize: 23),
             ),
             centerTitle: false,
-            backgroundColor: Colors.lightBlueAccent,
+            backgroundColor: Colors.blue[300],
             elevation: 0.0,
             actions: [
               IconButton(
-                  onPressed: (){},
-                  icon: setIcon(),
-              )
-            ] ,
+                onPressed: (){},
+                icon: setIcon(),
+              ),
+            ],
           ),
           body: Container(
             height: 800,
@@ -93,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(30),
                 topRight: Radius.circular(30),
+
               )
             ),
             child: Column(
@@ -165,11 +127,60 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
 
                 const AllPayedTenants(),
-
               ],
             ),
           ),
     );
   }
+
+  void getAllTenants(){
+    final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
+
+    dbFuture.then((database){
+      Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
+      tenantListFuture.then((tenants){
+        if(mounted) {
+          setState(() {
+            this.tenants = tenants;
+          });
+        }
+      });
+    });
+  }
+
+  int _fetchPayedTenantCount() {
+    return tenants.where((tenant) => tenant.status == 1).length;
+  }
+
+  int _fetchNotFullyPayedTenantCount() {
+    return tenants.where((tenant) => tenant.status == 2).length;
+  }
+
+  int _fetchNotPayedTenantCount() {
+    return tenants.where((tenant) => tenant.status == 3).length;
+  }
+
+  int getTenantsDueInThreeDays(){
+    return tenants.where((tenant) => tenant.isPaymentDueThreeDays() == true).length;
+  }
+
+  int getTenantsDueToday(){
+    int count = 0;
+
+    for (var tenant in tenants) {
+      if (tenant.isPaymentDue()) {
+        tenant.changeStatus(); // Change the value of the specific tenant
+        count++;
+      }
+    }
+
+    return count;
+  }
+
+  Icon setIcon(){
+    //debugPrint('${(getTenantsDueToday())}');
+    return getTenantsDueInThreeDays() != 0 ||  getTenantsDueToday() != 0 ? const Icon(Icons.notifications_active, color: Colors.red) : const Icon(Icons.notifications_none);
+  }
+
 }
 
