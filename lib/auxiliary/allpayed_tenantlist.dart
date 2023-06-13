@@ -38,6 +38,12 @@ class _AllPayedTenantsState extends State<AllPayedTenants> {
   String dateInfo(DateTime dt) => DateFormat('MMMM d, y').format(dt);
 
   @override
+  void initState(){
+    super.initState();
+    updateListView();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     updateListView();
@@ -54,12 +60,12 @@ class _AllPayedTenantsState extends State<AllPayedTenants> {
                 elevation: 2.0,
                 child: ListTile(
                   onTap: () {},
-                  leading: CircleAvatar(
+                  leading: const CircleAvatar(
                     backgroundColor: Colors.greenAccent,
                     child: Icon(Icons.perm_identity_rounded),
                   ),
                   title: Text(
-                      this.tenants[position].name.toString(),
+                      tenants[position].name.toString(),
                       style: TextStyle(
                         fontSize: 18.0,
                         color: Colors.grey[600],

@@ -1,6 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:boardease_application/components/root_app.dart';
 import 'package:boardease_application/main.dart';
-import 'package:boardease_application/notification_service/notifications.dart';
 import 'package:flutter/material.dart';
 
 class NotificationService {
@@ -79,28 +79,29 @@ class NotificationService {
           );
         }*/
       ReceivedAction receivedAction) async {
-    debugPrint('onActionReceivedMethod');
-    //final payload = receivedAction.payload ?? {};
-    // if (payload["navigate"] == "true") {
-      BoardEaseApp.navigatorKey.currentState?.push(
-        MaterialPageRoute(
-          builder: (_) => const Notifications(),
-        ),
-      );
+      debugPrint('onActionReceivedMethod');
+      final payload = receivedAction.payload ?? {};
+      if (payload["navigate"] == "true") {
+        BoardEaseApp.navigatorKey.currentState?.push(
+          MaterialPageRoute(
+            builder: (_) => const RootApp(),
+          ),
+        );
+      }
   }
 
   static Future<void> showNotification({
     required final String title,
     required final String body,
-    required final NotificationCalendar notificationCalendar,
+    final DateTime? notificationCalendar,
     final ActionType actionType = ActionType.Default,
-    //final Map<String, String>? payload,
+    final Map<String, String>? payload,
     final NotificationLayout notificationLayout = NotificationLayout.Default,
     final List<NotificationActionButton>? actionButtons,
     final bool scheduled = false,
-    final int? interval,
+    //final int? interval,
   }) async {
-    assert(!scheduled || (scheduled && interval != null));
+    assert(!scheduled || (scheduled && notificationCalendar != null));
 
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -109,19 +110,42 @@ class NotificationService {
         title: title,
         body: body,
         actionType: actionType,
-        //payload: payload,
+        payload: payload,
         notificationLayout: notificationLayout,
         wakeUpScreen: true,
       ),
       actionButtons: actionButtons,
+      //notificationCalendar: notificationCalendar,
       schedule: scheduled
+          ? NotificationCalendar(
+        // For testing is in here
+        //month: notificationCalendar.month,
+       // day: notificationCalendar.day,
+        //hour: notificationCalendar.hour,
+        //minute: notificationCalendar.minute,
+        second: 2,
+        millisecond: 0,
+        timeZone:
+        await AwesomeNotifications().getLocalTimeZoneIdentifier(),
+        preciseAlarm: true,
+      )
+          : null,
+      /*schedule: scheduled
           ? NotificationInterval(
         interval: interval,
         timeZone:
         await AwesomeNotifications().getLocalTimeZoneIdentifier(),
         preciseAlarm: true,
       )
-          : null,
+          : null,*/
+      /*NotificationCalendar(
+          *//*hour: 14,
+          minute: 59,*//*
+          minute: 2,
+          second: 10,
+          millisecond: 0,
+          repeats: false,
+      ),*/
     );
   }
 }

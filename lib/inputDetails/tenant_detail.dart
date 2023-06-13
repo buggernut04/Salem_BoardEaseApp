@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:boardease_application/classes/model/tenantpayment.dart';
 import 'package:boardease_application/database/databasehelper.dart';
 import 'package:boardease_application/notification_service/notification_body.dart';
@@ -66,6 +67,18 @@ class _TenantDetailState extends State<TenantDetail> {
     });
   }
 
+  void getTenantForNotification(){
+    Tenant tenantWithNearestDate = tenant.reduce((a, b) =>
+    (DateTime.parse(a.currentDate.toString()).difference(DateTime.now()).abs() <
+        DateTime.parse(b.currentDate.toString()).difference(DateTime.now()).abs())
+        ? a
+        : b);
+
+    debugPrint("${tenantWithNearestDate.currentDate.month} + ${tenantWithNearestDate.currentDate.day - 3} + ${tenantWithNearestDate.name}");
+
+    getTenantNotification(tenantWithNearestDate);
+  }
+
   // remove a tenant
   void removeTenant(BuildContext context, Tenant tenant) async {
     int? result = await DatabaseHelper.databaseHelper.deleteTenant(widget.tenant.id);
@@ -87,7 +100,6 @@ class _TenantDetailState extends State<TenantDetail> {
     if(widget.tenant.id != null){
       result = await DatabaseHelper.databaseHelper.updateTenant(widget.tenant);
     } else{
-
       // If when the tenant will start to live, that is also the day he will start his/her payment.
       // Base on my stakeholder advise
       widget.tenant.currentDate = widget.tenant.startDate;
@@ -210,16 +222,7 @@ class _TenantDetailState extends State<TenantDetail> {
                           ),
                           onPressed: () {
                             saveTenant();
-
-                            Tenant tenantWithNearestDate = tenant.reduce((a, b) =>
-                            (DateTime.parse(a.currentDate.toString()).difference(DateTime.now()).abs() <
-                                DateTime.parse(b.currentDate.toString()).difference(DateTime.now()).abs())
-                                ? a
-                                : b);
-
-                            debugPrint("${tenantWithNearestDate.currentDate.month}");
-
-                            getTenantNotification(tenantWithNearestDate);
+                            getTenantForNotification();
 
                             Navigator.pop(context, true);
                           },
@@ -231,17 +234,14 @@ class _TenantDetailState extends State<TenantDetail> {
                     Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(foregroundColor: Colors.white70),
-                          child: Text( widget.appBarTitle == 'Add Tenant' ? 'Cancel' : 'Remove',
+                          child: const Text(
+                            'Cancel',
                             textScaleFactor: 1.5,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: Colors.blue
                             ),
                           ),
                           onPressed: () {
-                            if(widget.appBarTitle == 'Edit Tenant') {
-                              removeTenant(context, widget.tenant);
-                            }
-
                             Navigator.pop(context, true);
                           },
                         )

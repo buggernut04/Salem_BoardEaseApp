@@ -61,7 +61,6 @@ class _TenantStatusState extends State<TenantStatus> {
               }
             }
           });
-
           /*debugPrint('${(widget.tenant.tenantPayment.length)}');
           debugPrint('${(tPayments.length)}');*/
         }
@@ -69,13 +68,19 @@ class _TenantStatusState extends State<TenantStatus> {
     });
   }
 
-  void initializePaymentStatus(){
+  void initializeToInputPaymentStatus(){
     for (int i = pValues.length; i < widget.tenant.tenantPayment.length; i++) {
       pValues.add(getStatusAsString(widget.tenant.tenantPayment[i].isPayed));
     }
   }
 
   void saveTenantStatus() async {
+
+    for(var payment in widget.tenant.tenantPayment){
+      if(payment.isPayed == 1){
+        indicator++;
+      }
+    }
     indicator == widget.tenant.tenantPayment.length? widget.tenant.status = 1 : indicator == 0 ? widget.tenant.status = 3 : widget.tenant.status = 2;
 
     widget.tenant.updateStatusAndDate();
@@ -89,7 +94,7 @@ class _TenantStatusState extends State<TenantStatus> {
     TextEditingController currentDateController = TextEditingController();
     currentDateController.text = DateFormat.yMMMd().format(widget.tenant.currentDate);
 
-    initializePaymentStatus();
+    initializeToInputPaymentStatus();
 
     return Scaffold(
         appBar: AppBar(

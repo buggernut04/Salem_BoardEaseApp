@@ -30,12 +30,12 @@ class Tenant{
 
   bool isPaymentDueThreeDays() {
     final daysRemaining = currentDate.difference(DateTime.now()).inDays;
-    return (status == 2 || status == 3) && daysRemaining <= 3 && daysRemaining >= 1;
+    return daysRemaining <= 3 && daysRemaining >= 1;
   }
 
   bool isPaymentDue() {
     final daysRemaining = currentDate.difference(DateTime.now()).inDays;
-    return (status == 2 || status == 3) && daysRemaining <= 0;
+    return daysRemaining <= 0;
   }
 
   void changeStatus(){

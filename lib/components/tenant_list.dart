@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:boardease_application/inputDetails/tenant_status.dart';
 import 'package:boardease_application/classes/model/tenant.dart';
 import 'package:boardease_application/database/databasehelper.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../inputDetails/tenant_detail.dart';
+import '../notification_service/notification_body.dart';
 
 class TenantList extends StatefulWidget {
   const TenantList({Key? key}) : super(key: key);
@@ -29,7 +31,11 @@ class _TenantListState extends State<TenantList> {
         if(mounted) {
           setState(() {
             this.tenants = tenants;
-            count = tenants.length;
+
+            for(var paymentStatus in this.tenants){
+              paymentStatus.changeStatus();
+            }
+
           });
         }
       });
@@ -68,6 +74,19 @@ class _TenantListState extends State<TenantList> {
     }
   }
 
+  void getTenantForNotification(List<Tenant> tenant){
+    Tenant tenantWithNearestDate = tenant.reduce((a, b) =>
+    (DateTime.parse(a.currentDate.toString()).difference(DateTime.now()).abs() <
+        DateTime.parse(b.currentDate.toString()).difference(DateTime.now()).abs())
+        ? a
+        : b);
+
+    debugPrint("${tenantWithNearestDate.currentDate.month} + ${tenantWithNearestDate.currentDate.day - 3} + ${tenantWithNearestDate.name}");
+
+    getTenantNotification(tenantWithNearestDate);
+  }
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -80,7 +99,7 @@ class _TenantListState extends State<TenantList> {
           backgroundColor: Colors.blue[300],
         ),
         body: ListView.builder(
-                itemCount: count,
+                itemCount: tenants.length,
                 itemBuilder: (BuildContext context, int position){
                   return Padding(
                       padding: const EdgeInsets.all(1.0),
@@ -93,11 +112,11 @@ class _TenantListState extends State<TenantList> {
                               routeToTenantStatus(tenants[position]);
                             },
                             leading: CircleAvatar(
-                              backgroundColor: getStatusColor(this.tenants[position].status),
-                              child: Icon(Icons.perm_identity_rounded),
+                              backgroundColor: getStatusColor(tenants[position].status),
+                              child: const Icon(Icons.perm_identity_rounded),
                             ),
                             title: Text(
-                                this.tenants[position].name.toString(),
+                                tenants[position].name.toString(),
                                 style: TextStyle(
                                   fontSize: 18.0,
                                   color: Colors.grey[600],
@@ -121,8 +140,11 @@ class _TenantListState extends State<TenantList> {
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.delete),
-                                  onPressed: () {
+                                  onPressed: () async {
                                     removeTenant(context, tenants[position]);
+                                    await AwesomeNotifications().cancelAllSchedules();
+
+                                    getTenantForNotification(tenants);
                                   },
                                 ),
                               ],
