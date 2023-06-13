@@ -32,8 +32,8 @@ class _RecordBarState extends State<RecordBar> {
     });
   }
 
-  int _fetchNotPayedTenantCount() {
-    return tenants.where((tenant) => tenant.status == 3).length;
+  int _fetchPayedTenantCount() {
+    return tenants.where((tenant) => tenant.status == 1).length;
   }
 
   @override
@@ -47,10 +47,10 @@ class _RecordBarState extends State<RecordBar> {
   Widget build(BuildContext context) {
 
     return CircularPercentIndicator(
-      radius: 120.0,
-      lineWidth: 20.0,
-      percent: tenants.isEmpty ? 0.0 : _fetchNotPayedTenantCount() / tenants.length,
-      center: tenants.isEmpty ? const Text('0%') : Text('${(_fetchNotPayedTenantCount() / tenants.length * 100).toInt()}%') ,
+      radius: 180.0,
+      lineWidth: 25.0,
+      percent: tenants.isEmpty ? 0.0 : _fetchPayedTenantCount() / tenants.length,
+      center: Text('${_fetchPayedTenantCount()} / ${tenants.length} \n Paid Tenants',textAlign: TextAlign.center, style: const TextStyle(fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),),
       animation: true,
       animationDuration: 1500,
       progressColor: Colors.indigo,

@@ -123,8 +123,8 @@ class NotificationService {
        // day: notificationCalendar.day,
         //hour: notificationCalendar.hour,
         //minute: notificationCalendar.minute,
-        second: 2,
-        millisecond: 0,
+        second: notificationCalendar?.second,
+        //millisecond: notificationCalendar?.millisecond,
         timeZone:
         await AwesomeNotifications().getLocalTimeZoneIdentifier(),
         preciseAlarm: true,

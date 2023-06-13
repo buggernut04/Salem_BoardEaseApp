@@ -33,19 +33,18 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
           backgroundColor: Colors.blue[300],
           appBar: AppBar(
-            title: const Text(
+              title: const Text(
                 'BoardEase',
-              style: TextStyle(fontSize: 23),
-            ),
-            centerTitle: false,
-            backgroundColor: Colors.blue[300],
-            elevation: 0.0,
-            actions: [
-              IconButton(
-                onPressed: (){},
-                icon: setIcon(),
+              style: TextStyle(
+                  fontSize: 25,
+                  color: Colors.black54,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.5,
               ),
-            ],
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.blue[300],
+            elevation: 1.0,
           ),
           body: Container(
             height: 800,
@@ -55,30 +54,54 @@ class _MyHomePageState extends State<MyHomePage> {
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(30),
                 topRight: Radius.circular(30),
-
               )
             ),
             child: Column(
               children: <Widget>[
 
                 Padding(
-                  padding: const EdgeInsets.only(left: 30, top: 30),
+                  padding: const EdgeInsets.only(left: 15.0, top: 20.0, right: 8.0),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container(
+
+                      const Text(
+                          'Home',
+                          style: TextStyle(
+                            fontSize: 23.0,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.0,
+                          ),
+                      ),
+                      /*Container(
                         decoration: BoxDecoration(
                           //color: Colors.yellowAccent,
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         padding: const EdgeInsets.fromLTRB(20.0, 30.0, 20.0,10.0),
                         child: const RecordBar()
-                      ),
+                      ),*/
 
                       //Divider(height: 10.0,),
 
-                      Expanded(
+                      Row(
+                        children: <Widget>[
+
+                          IconButton(
+                            onPressed: (){},
+                            icon: setIcon(),
+                          ),
+
+                          IconButton(
+                            onPressed: (){},
+                            icon: const Icon(Icons.info_outline),
+                          ),
+
+                        ],
+                      ),
+
+                      /*Expanded(
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(20.0, 30.0, 10.0,10.0),
                           child: Column(
@@ -106,10 +129,21 @@ class _MyHomePageState extends State<MyHomePage> {
                             ]
                           ),
                         ),
-                      )
+                      )*/
                     ],
                   ),
                 ),
+
+                Container(
+                    decoration: BoxDecoration(
+                      //color: Colors.yellowAccent,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    padding: const EdgeInsets.fromLTRB(20.0, 30.0, 20.0,10.0),
+                    child: const RecordBar()
+                ),
+
+    //Divider(height: 10.0,),
 
                 Container(
                   padding: const EdgeInsets.only(top: 20.0, right: 20),
@@ -170,7 +204,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     for (var tenant in tenants) {
       if (tenant.isPaymentDue()) {
-        tenant.changeStatus(); // Change the value of the specific tenant
+        tenant.changeStatusWhenPaidAndNotPaid(); // Change the value of the specific tenant
         count++;
       }
     }

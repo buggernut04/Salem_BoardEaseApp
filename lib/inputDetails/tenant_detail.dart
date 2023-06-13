@@ -1,4 +1,3 @@
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:boardease_application/classes/model/tenantpayment.dart';
 import 'package:boardease_application/database/databasehelper.dart';
 import 'package:boardease_application/notification_service/notification_body.dart';
@@ -46,16 +45,6 @@ class _TenantDetailState extends State<TenantDetail> {
     final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
 
     dbFuture.then((database){
-      Future<List<TenantPayment>> tPaymentListFuture = DatabaseHelper.databaseHelper.getTPaymentList();
-      tPaymentListFuture.then((tPayments){
-          setState(() {
-            //debugPrint('${()}')
-            widget.tenant.tenantPayment = tPayments;
-          });
-      });
-    });
-
-    dbFuture.then((database){
       Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
       tenantListFuture.then((tenants){
         if(mounted) {
@@ -68,6 +57,7 @@ class _TenantDetailState extends State<TenantDetail> {
   }
 
   void getTenantForNotification(){
+
     Tenant tenantWithNearestDate = tenant.reduce((a, b) =>
     (DateTime.parse(a.currentDate.toString()).difference(DateTime.now()).abs() <
         DateTime.parse(b.currentDate.toString()).difference(DateTime.now()).abs())
@@ -80,6 +70,7 @@ class _TenantDetailState extends State<TenantDetail> {
   }
 
   // remove a tenant
+  // improve
   void removeTenant(BuildContext context, Tenant tenant) async {
     int? result = await DatabaseHelper.databaseHelper.deleteTenant(widget.tenant.id);
 
@@ -222,7 +213,7 @@ class _TenantDetailState extends State<TenantDetail> {
                           ),
                           onPressed: () {
                             saveTenant();
-                            getTenantForNotification();
+                            tenant.length <= 1 ? getTenantNotification(widget.tenant) : getTenantForNotification();
 
                             Navigator.pop(context, true);
                           },

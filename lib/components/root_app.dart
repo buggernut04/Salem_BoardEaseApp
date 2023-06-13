@@ -38,6 +38,8 @@ class _RootAppState extends State<RootApp> {
         backgroundColor: Colors.yellowAccent,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.black.withOpacity(0.8),
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
         onTap: (index){
           selectedTab(index);
         },

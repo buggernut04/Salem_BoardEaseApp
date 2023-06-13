@@ -23,6 +23,9 @@ import 'notification_api.dart';
         )
       ],
       scheduled: true,
-  );
+    );
+  }
 
-}
+  Future<void> cancelAllNotifications() async {
+    await AwesomeNotifications().cancelAllSchedules();
+  }

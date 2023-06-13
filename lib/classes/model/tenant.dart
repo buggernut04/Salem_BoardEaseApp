@@ -38,7 +38,7 @@ class Tenant{
     return daysRemaining <= 0;
   }
 
-  void changeStatus(){
+  void changeStatusWhenPaidAndNotPaid(){
     if(isPaymentDue() && (status == 1 || status == 2)){
       for (var payment in tenantPayment) {
         payment.isPayed = 0;

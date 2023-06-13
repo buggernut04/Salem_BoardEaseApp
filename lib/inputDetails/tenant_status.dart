@@ -37,32 +37,20 @@ class _TenantStatusState extends State<TenantStatus> {
       tPaymentListFuture.then((tPayments){
         if(mounted) {
           setState(() {
-            if(widget.tenant.tenantPayment.length <= tPayments.length) {
-              for(int i = widget.tenant.tenantPayment.length; i <
-                  tPayments.length; i++) {
-                widget.tenant.tenantPayment.add(tPayments[i]);
-              }
-            } else{
-              int i = 0, j = 0;
-              while(true){
-                if(tPayments[i].paymentName != widget.tenant.tenantPayment[j].paymentName){
-                  widget.tenant.tenantPayment.remove(widget.tenant.tenantPayment[i]);
+            if (widget.tenant.tenantPayment.length <= tPayments.length) {
+              widget.tenant.tenantPayment.addAll(tPayments.sublist(widget.tenant.tenantPayment.length));
+            } else {
+              int i = 0;
+              while (i < tPayments.length) {
+                if (tPayments[i].paymentName != widget.tenant.tenantPayment[i].paymentName) {
+                  widget.tenant.tenantPayment.removeAt(i);
+                } else {
                   i++;
-                } else{
-                  i++;
-                  j++;
-                }
-                if(i >= tPayments.length){
-                  break;
                 }
               }
-              if(tPayments.length != widget.tenant.tenantPayment.length){
-                widget.tenant.tenantPayment.remove(widget.tenant.tenantPayment[i]);
-              }
+              widget.tenant.tenantPayment.removeRange(i, widget.tenant.tenantPayment.length);
             }
           });
-          /*debugPrint('${(widget.tenant.tenantPayment.length)}');
-          debugPrint('${(tPayments.length)}');*/
         }
       });
     });
@@ -178,13 +166,6 @@ class _TenantStatusState extends State<TenantStatus> {
                                           pValues[position] = newValue;
                                           widget.tenant.tenantPayment[position]
                                               .isPayed = updateStatus(newValue);
-                                          //debugPrint('${(widget.tenant.tenantPayment[position].isPayed)}');
-                                          if(widget.tenant.tenantPayment[position].isPayed == 1){
-                                            // put a condition in here
-                                            // ibutang sa save ni nga button jud
-                                            indicator++;
-                                          }
-                                          //await DatabaseHelper.databaseHelper.updateTenant(widget.tenant);
                                         });
                                       },
                                       dropdownColor: Colors.white,
@@ -209,6 +190,10 @@ class _TenantStatusState extends State<TenantStatus> {
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(foregroundColor: Colors.white70
                                           ),
+                                          onPressed: widget.tenant.status == 1 ? null : () {
+                                            saveTenantStatus();
+                                            Navigator.pop(context, true);
+                                          },
                                           child: const Text(
                                             'Save',
                                             textScaleFactor: 1.5,
@@ -216,10 +201,6 @@ class _TenantStatusState extends State<TenantStatus> {
                                                 color: Colors.blue
                                             ),
                                           ),
-                                          onPressed: () {
-                                            saveTenantStatus();
-                                            Navigator.pop(context, true);
-                                          },
                                         )
                                     ),
 

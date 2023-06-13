@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:boardease_application/inputDetails/tenant_status.dart';
 import 'package:boardease_application/classes/model/tenant.dart';
 import 'package:boardease_application/database/databasehelper.dart';
@@ -20,7 +19,6 @@ class TenantList extends StatefulWidget {
 class _TenantListState extends State<TenantList> {
 
   List<Tenant> tenants = [];
-  int count = 0;
 
   void updateListView(){
     final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
@@ -31,11 +29,6 @@ class _TenantListState extends State<TenantList> {
         if(mounted) {
           setState(() {
             this.tenants = tenants;
-
-            for(var paymentStatus in this.tenants){
-              paymentStatus.changeStatus();
-            }
-
           });
         }
       });
@@ -93,68 +86,98 @@ class _TenantListState extends State<TenantList> {
     updateListView();
 
     return Scaffold(
+        backgroundColor: Colors.blue[300],
         appBar: AppBar(
-          centerTitle: false,
-          title: const Text('Tenants List'),
-          backgroundColor: Colors.blue[300],
-        ),
-        body: ListView.builder(
-                itemCount: tenants.length,
-                itemBuilder: (BuildContext context, int position){
-                  return Padding(
-                      padding: const EdgeInsets.all(1.0),
-                      child: Card(
-                          color: Colors.white,
-                          margin: EdgeInsets.fromLTRB(10.0, 10.0, 10.0,1.0),
-                          elevation: 2.0,
-                          child: ListTile(
-                            onTap: () {
-                              routeToTenantStatus(tenants[position]);
-                            },
-                            leading: CircleAvatar(
-                              backgroundColor: getStatusColor(tenants[position].status),
-                              child: const Icon(Icons.perm_identity_rounded),
-                            ),
-                            title: Text(
-                                tenants[position].name.toString(),
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.grey[600],
-                                )
-                            ),
-                            subtitle: Text(
-                                getStatus(tenants[position].status),
-                                style: TextStyle(
-                                  fontSize: 18.0,
-                                  color: Colors.grey[600],
-                                )
-                            ),
-                            trailing:Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () {
-                                    routeToTenantDetail(tenants[position], 'Edit Tenant');
-                                  },
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () async {
-                                    removeTenant(context, tenants[position]);
-                                    await AwesomeNotifications().cancelAllSchedules();
-
-                                    getTenantForNotification(tenants);
-                                  },
-                                ),
-                              ],
-                            ),
-                            dense: true,
-                          )
-                      )
-                  );
-                }
+          title: const Text(
+            'BoardEase',
+            style: TextStyle(
+              fontSize: 25,
+              color: Colors.black54,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
             ),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.blue[300],
+          elevation: 1.0,
+        ),
+        body: Container(
+          height: 800,
+          width: double.infinity,
+          decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              )
+          ),
+          child: tenants.isEmpty
+              ? Center(
+            child: Text(
+              'No tenant records',
+              style: TextStyle(fontSize: 18.0, color: Colors.grey[600], fontStyle: FontStyle.italic),
+            ),
+          ) : ListView.builder(
+                  itemCount: tenants.length,
+                  itemBuilder: (BuildContext context, int position){
+                    return Padding(
+                        padding: const EdgeInsets.all(1.0),
+                        child: Card(
+                            color: Colors.white,
+                            margin: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0,1.0),
+                            elevation: 2.0,
+                            child: ListTile(
+                              onTap: () {
+                                routeToTenantStatus(tenants[position]);
+                              },
+                              leading: CircleAvatar(
+                                backgroundColor: getStatusColor(tenants[position].status),
+                                child: const Icon(Icons.perm_identity_rounded),
+                              ),
+                              title: Text(
+                                  tenants[position].name.toString(),
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: Colors.grey[600],
+                                  )
+                              ),
+                              subtitle: Text(
+                                  getStatus(tenants[position].status),
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    color: Colors.grey[600],
+                                  )
+                              ),
+                              trailing:Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () {
+                                      routeToTenantDetail(tenants[position], 'Edit Tenant');
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: () async {
+                                      removeTenant(context, tenants[position]);
+                                      //getTenantForNotification(tenants);
+                                      cancelAllNotifications();
+
+                                      if(tenants.isNotEmpty){
+                                        getTenantForNotification(tenants);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                              dense: true,
+                            )
+                        )
+                    );
+                  }
+              ),
+        ),
             floatingActionButton: FloatingActionButton(
                 onPressed: () {
                   routeToTenantDetail(Tenant(name: '', contactInfo: '', status: 3, startDate: DateTime.now(), currentDate: DateTime.now(), tenantPayment: []), 'Add Tenant');
