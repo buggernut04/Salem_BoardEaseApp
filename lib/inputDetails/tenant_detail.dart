@@ -66,39 +66,9 @@ class _TenantDetailState extends State<TenantDetail> {
 
     debugPrint("${tenantWithNearestDate.currentDate.month} + ${tenantWithNearestDate.currentDate.day - 3} + ${tenantWithNearestDate.name}");
 
-    getTenantNotification(tenantWithNearestDate);
-  }
+    getTenantNotificationWhenAlmostDue(tenantWithNearestDate);
+    getTenantNotificationWhenDue(tenantWithNearestDate);
 
-  // remove a tenant
-  // improve
-  void removeTenant(BuildContext context, Tenant tenant) async {
-    int? result = await DatabaseHelper.databaseHelper.deleteTenant(widget.tenant.id);
-
-    if(result != 0){
-      showSnackBar(context, 'Tenant Removed');
-    }
-  }
-
-  void showSnackBar(BuildContext context, String message){
-    final snackBar = SnackBar(content: Text(message));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  // save the tenant to the database
-  void saveTenant() async {
-    int? result;
-
-    if(widget.tenant.id != null){
-      result = await DatabaseHelper.databaseHelper.updateTenant(widget.tenant);
-    } else{
-      // If when the tenant will start to live, that is also the day he will start his/her payment.
-      // Base on my stakeholder advise
-      widget.tenant.currentDate = widget.tenant.startDate;
-
-      result = await DatabaseHelper.databaseHelper.insertTenant(widget.tenant);
-    }
-
-    result != 0 ? debugPrint('Success') : debugPrint('Fail');
   }
 
   @override
@@ -212,8 +182,10 @@ class _TenantDetailState extends State<TenantDetail> {
                               ),
                           ),
                           onPressed: () {
-                            saveTenant();
-                            tenant.length <= 1 ? getTenantNotification(widget.tenant) : getTenantForNotification();
+                            widget.tenant.saveTenant();
+
+                            cancelAllNotifications();
+                            tenant.length <= 1 && widget.tenant.status != 1 ? getTenantNotificationWhenAlmostDue(widget.tenant): getTenantForNotification();
 
                             Navigator.pop(context, true);
                           },

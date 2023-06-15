@@ -59,24 +59,32 @@ class _TenantListState extends State<TenantList> {
     }
   }
 
-  void removeTenant(BuildContext context, Tenant tenant) async {
-    int? result = await DatabaseHelper.databaseHelper.deleteTenant(tenant.id);
-
-    if(result != 0){
-      showSnackBar(context, 'Tenant Removed');
-    }
-  }
-
-  void getTenantForNotification(List<Tenant> tenant){
-    Tenant tenantWithNearestDate = tenant.reduce((a, b) =>
+  void getTenantForNotification(List<Tenant> tenants){
+    /*Tenant tenantWithNearestDate = tenant.reduce((a, b) =>
     (DateTime.parse(a.currentDate.toString()).difference(DateTime.now()).abs() <
         DateTime.parse(b.currentDate.toString()).difference(DateTime.now()).abs())
+        ? a
+        : b);*/
+
+    List<Tenant> filteredTenants = tenants
+        .where((tenant) => tenant.status != 1)
+        .toList();
+
+    if (filteredTenants.isEmpty) {
+      return;
+    }
+
+    DateTime now = DateTime.now();
+    Tenant tenantWithNearestDate = filteredTenants.reduce((a, b) =>
+    (a.currentDate.difference(now).abs() <
+        b.currentDate.difference(now).abs())
         ? a
         : b);
 
     debugPrint("${tenantWithNearestDate.currentDate.month} + ${tenantWithNearestDate.currentDate.day - 3} + ${tenantWithNearestDate.name}");
 
-    getTenantNotification(tenantWithNearestDate);
+    getTenantNotificationWhenAlmostDue(tenantWithNearestDate);
+    getTenantNotificationWhenDue(tenantWithNearestDate);
   }
 
 
@@ -160,8 +168,8 @@ class _TenantListState extends State<TenantList> {
                                   IconButton(
                                     icon: const Icon(Icons.delete),
                                     onPressed: () async {
-                                      removeTenant(context, tenants[position]);
-                                      //getTenantForNotification(tenants);
+                                      tenants[position].removeTenant(context);
+
                                       cancelAllNotifications();
 
                                       if(tenants.isNotEmpty){
@@ -190,11 +198,6 @@ class _TenantListState extends State<TenantList> {
             )
         );
     }
-
-  void showSnackBar(BuildContext context, String message){
-    final snackBar = SnackBar(content: Text(message));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
 
   String getStatus(int? status){
     if(status == 1){

@@ -1,6 +1,10 @@
 import 'dart:convert';
 
 import 'package:boardease_application/classes/model/tenantpayment.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import '../../database/databasehelper.dart';
 
 class Tenant{
 
@@ -45,6 +49,38 @@ class Tenant{
       }
       status = 3;
     }
+  }
+
+  // save the tenant to the database
+  void saveTenant() async {
+    int? result;
+
+    if(id != null){
+      result = await DatabaseHelper.databaseHelper.updateTenant(this);
+    } else{
+      // If when the tenant will start to live, that is also the day he will start his/her payment.
+      // Base on my stakeholder advise
+      currentDate = startDate;
+
+      result = await DatabaseHelper.databaseHelper.insertTenant(this);
+    }
+
+    result != 0 ? print('Success') : print('Fail');
+  }
+
+  // remove a tenant
+  // improve
+  void removeTenant(BuildContext context) async {
+    int? result = await DatabaseHelper.databaseHelper.deleteTenant(id);
+
+    if(result != 0){
+      showSnackBar(context, 'Tenant Removed');
+    }
+  }
+
+  void showSnackBar(BuildContext context, String message){
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   // Convert a Tenant object into a Map Object

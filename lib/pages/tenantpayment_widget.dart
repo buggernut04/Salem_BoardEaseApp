@@ -2,9 +2,9 @@ import 'package:boardease_application/inputDetails/editdeletetenantpayment.dart'
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../database/databasehelper.dart';
-import '../../dialogBox/addpayment.dart';
-import '../model/tenantpayment.dart';
+import '../database/databasehelper.dart';
+import '../inputDetails/addpayment.dart';
+import '../classes/model/tenantpayment.dart';
 
 class TenantPaymentWidget extends StatefulWidget {
   const TenantPaymentWidget({Key? key}) : super(key: key);
@@ -27,7 +27,16 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
   }
 
   void removeTPayment(TenantPayment tPay) async {
-    await DatabaseHelper.databaseHelper.deleteTPayment(tPay.id);
+    int? result =  await DatabaseHelper.databaseHelper.deleteTPayment(tPay.id);
+
+    if(result != 0){
+        showSnackBar(context, 'Payment Removed');
+    }
+  }
+
+  void showSnackBar(BuildContext context, String message){
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void updateTPaymentListView(){
@@ -39,12 +48,11 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
         if(mounted) {
           setState(() {
             tPayment = tPayments;
-
             //debugPrint('${(count)}');
             if (tPayment.isEmpty) {
               saveTPayment(TenantPayment(id: null,
                   paymentName: 'Rental Fee',
-                  amount: 0,
+                  amount: null,
                   isPayed: 0));
             }
           });
@@ -61,11 +69,23 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
         })
     );
 
+    debugPrint('$result');
     if(result){
       updateTPaymentListView();
+
+      for (int i = tPaymentController.length < tPayment.length ? tPaymentController.length : 0; i < tPayment.length; i++) {
+        tPaymentController.add(TextEditingController(
+          text: tPayment[i].amount == 0 ? null : tPayment[i].amount.toString(),
+        ));
+      }
     }
   }
 
+  @override
+  void initState(){
+    super.initState();
+    updateTPaymentListView();
+  }
 
   @override
   Widget build(BuildContext context) {

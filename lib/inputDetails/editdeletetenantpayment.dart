@@ -86,7 +86,7 @@ class _EditDeleteTenantPaymentState extends State<EditDeleteTenantPayment> {
             child: ElevatedButton(
               onPressed: () {
                 saveTPayment();
-                Navigator.pop(context, true);
+                Navigator.of(context).pop(true);
               },
               child: const Text(
                 'SAVE',

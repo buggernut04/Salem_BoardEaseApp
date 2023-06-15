@@ -1,5 +1,5 @@
-import 'package:boardease_application/classes/payment_setupfunc/ownerpayment_widget.dart';
-import 'package:boardease_application/classes/payment_setupfunc/tenantpayment_widget.dart';
+import 'package:boardease_application/pages/ownerpayment_widget.dart';
+import 'package:boardease_application/pages/tenantpayment_widget.dart';
 import 'package:flutter/material.dart';
 
 class PaymentDetail extends StatefulWidget {

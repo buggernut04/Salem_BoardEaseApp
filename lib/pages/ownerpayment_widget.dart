@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../database/databasehelper.dart';
-import '../../dialogBox/addpayment.dart';
-import '../model/ownerpayment.dart';
+import '../database/databasehelper.dart';
+import '../inputDetails/addpayment.dart';
+import '../classes/model/ownerpayment.dart';
 
 class OwnerPaymentWidget extends StatefulWidget {
   const OwnerPaymentWidget({Key? key}) : super(key: key);

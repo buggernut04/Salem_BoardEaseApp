@@ -105,7 +105,7 @@ class _AddPaymentState extends State<AddPayment> {
                       saveWPayment(OwnerPayment(id: null, paymentName: pName.text, amount: int.tryParse(amount.text) ?? 0, datePayed: DateTime.now()));
                     }
 
-                    Navigator.of(context).pop(); // Close the dialog
+                    Navigator.of(context).pop(true); // Close the dialog
                   },
                   child: const Text(
                     'ADD',
