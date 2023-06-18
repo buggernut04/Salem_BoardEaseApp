@@ -1,4 +1,4 @@
-import 'package:boardease_application/classes/model/ownerpayment.dart';
+import 'package:boardease_application/for_future_use/ownerpayment.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';
@@ -98,7 +98,7 @@ class DatabaseHelper {
     Database? db = await databaseHelper.database;
     var tenant = await db?.query(tenantTable, orderBy: colCurrentDate);
 
-    List<Tenant>? tenantList = tenant != null ? tenant.map((e) => Tenant.fromMapObject(e)).toList() : [];
+    List<Tenant> ? tenantList = tenant != null ? tenant.map((e) => Tenant.fromMapObject(e)).toList() : [];
 
     return tenantList;
   }

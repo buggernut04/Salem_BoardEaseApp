@@ -18,8 +18,8 @@ class TenantStatus extends StatefulWidget {
 class _TenantStatusState extends State<TenantStatus> {
 
   List<String?> pValues = [];
+  TextEditingController currentDateController = TextEditingController();
   int indicator = 0;
-  //List<TenantPayment> tPayment = [];
 
   final _paymentStatus = ['Payed', 'Not Payed'];
 
@@ -79,7 +79,6 @@ class _TenantStatusState extends State<TenantStatus> {
   @override
   Widget build(BuildContext context) {
 
-    TextEditingController currentDateController = TextEditingController();
     currentDateController.text = DateFormat.yMMMd().format(widget.tenant.currentDate);
 
     initializeToInputPaymentStatus();

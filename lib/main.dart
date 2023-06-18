@@ -16,6 +16,7 @@ class BoardEaseApp extends StatelessWidget {
   // This widget is the root of my application.
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
         navigatorKey: navigatorKey,
         initialRoute: '/',

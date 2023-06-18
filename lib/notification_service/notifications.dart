@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'package:boardease_application/components/homepage.dart';
+//import 'package:boardease_application/mainpages/homepage.dart';
 
 class Notifications extends StatefulWidget {
   const Notifications({Key? key}) : super(key: key);

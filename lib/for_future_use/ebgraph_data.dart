@@ -1,3 +1,4 @@
+/*
 import 'package:boardease_application/graph/waterbill/wbgraph.dart';
 import 'package:flutter/material.dart';
 
@@ -66,13 +67,15 @@ class _ElectricBillDataState extends State<ElectricBillData> {
                 Icons.sell_outlined,
                 size: 20,
               ),
-              /*Text(
+              */
+/*Text(
                         'Total: ',
                         style: TextStyle(
                           fontSize: 17,
                           //color: Colors.green.shade600,
                         ),
-                      ),*/
+                      ),*//*
+
               Text(
                 ' ₱2000.0}',
                 style: TextStyle(
@@ -97,3 +100,4 @@ class _ElectricBillDataState extends State<ElectricBillData> {
     );
   }
 }
+*/

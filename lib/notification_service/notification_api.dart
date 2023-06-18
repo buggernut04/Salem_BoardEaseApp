@@ -1,7 +1,9 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
-import 'package:boardease_application/components/root_app.dart';
+import 'package:boardease_application/auxiliary/splashscreen.dart';
 import 'package:boardease_application/main.dart';
 import 'package:flutter/material.dart';
+
+import 'notifications.dart';
 
 class NotificationService {
 
@@ -14,9 +16,9 @@ class NotificationService {
           channelName: 'BoardEase App',
           channelDescription: 'Notification channel for basic tests',
           channelGroupKey: 'high_importance_channel',
-          defaultColor: const Color(0xFF9D50DD),
+          defaultColor: const Color(0xFF153CDA),
           ledColor: Colors.white,
-          importance: NotificationImportance.High,
+          importance: NotificationImportance.Max,
           channelShowBadge: true,
           onlyAlertOnce: true,
           playSound: true,
@@ -67,33 +69,36 @@ class NotificationService {
   }
 
   /// Use this method to detect when the user taps on a notification or action button
-  static Future<void> onActionReceivedMethod(
-      /*ReceivedAction receivedAction) async {
-        debugPrint('onActionReceivedMethod');
-        final payload = receivedAction.payload ?? {};
-        if (payload["navigate"] == "true") {
-          BoardEaseApp.navigatorKey.currentState?.push(
-            MaterialPageRoute(
-              builder: (_) => const Notifications(),
-            ),
-          );
-        }*/
-      ReceivedAction receivedAction) async {
-      debugPrint('onActionReceivedMethod');
-      final payload = receivedAction.payload ?? {};
-      if (payload["navigate"] == "true") {
+  static Future<void> onActionReceivedMethod(ReceivedAction receivedAction) async {
+    debugPrint('onActionReceivedMethod');
+    final payload = receivedAction.payload ?? {};
+
+    if (payload["navigate"] == "true") {
         BoardEaseApp.navigatorKey.currentState?.push(
-          MaterialPageRoute(
-            builder: (_) => const RootApp(),
-          ),
-        );
-      }
+        MaterialPageRoute(
+          builder: (_) => const SplashScreen(),
+        )).then((_) {
+        BoardEaseApp.navigatorKey.currentState?.pushReplacement(
+              MaterialPageRoute(
+                builder: (_) => const Notifications(),
+              ),
+            );
+        });
+    }
+    else{
+      BoardEaseApp.navigatorKey.currentState?.push(
+        MaterialPageRoute(
+          builder: (_) => const Notifications(),
+        ),
+      );
+    }
   }
+
 
   static Future<void> showNotification({
     required final String title,
     required final String body,
-    final DateTime? notificationCalendar,
+    required DateTime notificationCalendar,
     final ActionType actionType = ActionType.Default,
     final Map<String, String>? payload,
     final NotificationLayout notificationLayout = NotificationLayout.Default,
@@ -119,14 +124,14 @@ class NotificationService {
       schedule: scheduled
           ? NotificationCalendar(
         // For testing is in here
-        //month: notificationCalendar.month,
-       // day: notificationCalendar.day,
+        month: notificationCalendar.month,
+        day: notificationCalendar.day,
         //hour: notificationCalendar.hour,
         //minute: notificationCalendar.minute,
-        second: notificationCalendar?.second,
+        second: notificationCalendar.second,
         //millisecond: notificationCalendar?.millisecond,
         timeZone:
-        await AwesomeNotifications().getLocalTimeZoneIdentifier(),
+          await AwesomeNotifications().getLocalTimeZoneIdentifier(),
         preciseAlarm: true,
       )
           : null,

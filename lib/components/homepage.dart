@@ -1,7 +1,10 @@
-import 'package:boardease_application/auxiliary/allpayed_tenantlist.dart';
+import 'package:boardease_application/auxiliary/filtered_tenantlist.dart';
+import 'package:boardease_application/classes/model/tenantlist.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
-import '../auxiliary/recordbar.dart';
+//import '../auxiliary/dotindicator.dart';
+import '../auxiliary/dotindicator.dart';
+import '../auxiliary/homeview.dart';
 import '../classes/model/tenant.dart';
 import '../database/databasehelper.dart';
 
@@ -14,15 +17,29 @@ class MyHomePage extends StatefulWidget    {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  List<Tenant> tenants = [];
+  TenantList tenantsList = TenantList(tenant: []);
+  int currentIndex = 0;
 
+  void getAllTenants(){
+    final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
+
+    dbFuture.then((database){
+      Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
+      tenantListFuture.then((tenants){
+        if(mounted) {
+          setState(() {
+            tenantsList.tenant = tenants;
+          });
+        }
+      });
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     getAllTenants();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
             elevation: 1.0,
           ),
           body: Container(
-            height: 800,
+            //height: 800,
             width: double.infinity,
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -74,148 +91,70 @@ class _MyHomePageState extends State<MyHomePage> {
                             letterSpacing: 1.0,
                           ),
                       ),
-                      /*Container(
-                        decoration: BoxDecoration(
-                          //color: Colors.yellowAccent,
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        padding: const EdgeInsets.fromLTRB(20.0, 30.0, 20.0,10.0),
-                        child: const RecordBar()
-                      ),*/
-
-                      //Divider(height: 10.0,),
 
                       Row(
                         children: <Widget>[
 
                           IconButton(
                             onPressed: (){},
-                            icon: setIcon(),
+                            icon: tenantsList.setIcon(),
                           ),
 
                           IconButton(
                             onPressed: (){},
                             icon: const Icon(Icons.info_outline),
                           ),
-
                         ],
                       ),
-
-                      /*Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20.0, 30.0, 10.0,10.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                'Payed: ${(_fetchPayedTenantCount())}',
-                                style: const TextStyle(
-                                  fontSize: 18.0,
-                                ),
-                              ),
-                              Text(
-                                'Not Fully Payed: ${(_fetchNotFullyPayedTenantCount())}',
-                                style: const TextStyle(
-                                  fontSize: 18.0,
-                                ),
-                              ),
-                              Text(
-                                'Not Payed: ${(_fetchNotPayedTenantCount())}',
-                                style: const TextStyle(
-                                  fontSize: 18.0,
-                                ),
-                              ),
-                            ]
-                          ),
-                        ),
-                      )*/
                     ],
                   ),
                 ),
 
-                Container(
-                    decoration: BoxDecoration(
-                      //color: Colors.yellowAccent,
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    padding: const EdgeInsets.fromLTRB(20.0, 30.0, 20.0,10.0),
-                    child: const RecordBar()
-                ),
+               Expanded(
+                 child: DefaultTabController(
+                     length: 3,
+                     child: Column(
+                       //mainAxisSize: MainAxisSize.min,
+                       children: <Widget>[
+                           Container(
+                             padding: const EdgeInsets.symmetric(horizontal: 109.0),
+                             child: TabBar(
+                               indicatorColor: Colors.blue,
+                               onTap: (index) {
+                                 setState(() {
+                                   currentIndex = index;
+                                 });
+                               },
+                               tabs: [
+                                 for (int i = 0; i < 3; i++)
+                                   Tab(
+                                     child: DotIndicator(
+                                       isActive: currentIndex == i,
+                                     ),
+                                   ),
+                               ],
+                             ),
+                           ),
 
-    //Divider(height: 10.0,),
+                        Expanded(
+                          child: TabBarView(
+                              children: <Widget>[
+                                RecordBar(tenantsNum: tenantsList.getPaidTenants().length, color: Colors.yellow[600], allTenantsNum: tenantsList.tenant.length, statusDisplay: 'PAID', filteredList: FilteredTenantList(tenantList: tenantsList.getPaidTenants())),
 
-                Container(
-                  padding: const EdgeInsets.only(top: 20.0, right: 20),
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 6),
-                    child: Text(
-                      "Tenants Payed(This Month)",
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        letterSpacing: 1,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                ),
+                                RecordBar(tenantsNum: tenantsList.getNFPaidTenants().length, color: Colors.green, allTenantsNum: tenantsList.tenant.length, statusDisplay: 'NOT FULLY PAID', filteredList: FilteredTenantList(tenantList: tenantsList.getNFPaidTenants())),
 
-                const AllPayedTenants(),
+                                RecordBar(tenantsNum: tenantsList.getNotPaidTenants().length, color: Colors.red, allTenantsNum: tenantsList.tenant.length, statusDisplay: 'UNPAID', filteredList: FilteredTenantList(tenantList: tenantsList.getNotPaidTenants())),
+                              ]
+                          ),
+                        )
+                       ],
+                     ),
+                   ),
+                 ),
               ],
             ),
           ),
-    );
+     );
   }
-
-  void getAllTenants(){
-    final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
-
-    dbFuture.then((database){
-      Future<List<Tenant>> tenantListFuture = DatabaseHelper.databaseHelper.getTenantList();
-      tenantListFuture.then((tenants){
-        if(mounted) {
-          setState(() {
-            this.tenants = tenants;
-          });
-        }
-      });
-    });
-  }
-
-  int _fetchPayedTenantCount() {
-    return tenants.where((tenant) => tenant.status == 1).length;
-  }
-
-  int _fetchNotFullyPayedTenantCount() {
-    return tenants.where((tenant) => tenant.status == 2).length;
-  }
-
-  int _fetchNotPayedTenantCount() {
-    return tenants.where((tenant) => tenant.status == 3).length;
-  }
-
-  int getTenantsDueInThreeDays(){
-    return tenants.where((tenant) => tenant.isPaymentDueThreeDays() == true).length;
-  }
-
-  int getTenantsDueToday(){
-    int count = 0;
-
-    for (var tenant in tenants) {
-      if (tenant.isPaymentDue()) {
-        tenant.changeStatusWhenPaidAndNotPaid(); // Change the value of the specific tenant
-        count++;
-      }
-    }
-
-    return count;
-  }
-
-  Icon setIcon(){
-    //debugPrint('${(getTenantsDueToday())}');
-    return getTenantsDueInThreeDays() != 0 ||  getTenantsDueToday() != 0 ? const Icon(Icons.notifications_active, color: Colors.red) : const Icon(Icons.notifications_none);
-  }
-
 }
 

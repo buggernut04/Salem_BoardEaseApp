@@ -1,3 +1,4 @@
+import 'package:boardease_application/classes/model/tenantpaymentlist.dart';
 import 'package:boardease_application/inputDetails/editdeletetenantpayment.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
@@ -14,30 +15,9 @@ class TenantPaymentWidget extends StatefulWidget {
 }
 
 class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
-  List<TenantPayment> tPayment = [];
 
+  TPaymentList tPayment = TPaymentList(tPayments: []);
   List<TextEditingController> tPaymentController = [];
-
-  void saveTPayment(TenantPayment tenantPayment) async {
-    int? result;
-
-    result = await DatabaseHelper.databaseHelper.insertTPayment(tenantPayment);
-
-    result != 0 ? debugPrint('Success') : debugPrint('Fail');
-  }
-
-  void removeTPayment(TenantPayment tPay) async {
-    int? result =  await DatabaseHelper.databaseHelper.deleteTPayment(tPay.id);
-
-    if(result != 0){
-        showSnackBar(context, 'Payment Removed');
-    }
-  }
-
-  void showSnackBar(BuildContext context, String message){
-    final snackBar = SnackBar(content: Text(message));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
 
   void updateTPaymentListView(){
     final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
@@ -47,13 +27,15 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
       tPaymentListFuture.then((tPayments){
         if(mounted) {
           setState(() {
-            tPayment = tPayments;
-            //debugPrint('${(count)}');
-            if (tPayment.isEmpty) {
-              saveTPayment(TenantPayment(id: null,
+            tPayment.tPayments = tPayments;
+
+            if (tPayment.tPayments.isEmpty) {
+              TenantPayment tPayment = TenantPayment(id: null,
                   paymentName: 'Rental Fee',
                   amount: null,
-                  isPayed: 0));
+                  isPayed: 0);
+
+              tPayment.saveTPayment();
             }
           });
         }
@@ -72,12 +54,6 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
     debugPrint('$result');
     if(result){
       updateTPaymentListView();
-
-      for (int i = tPaymentController.length < tPayment.length ? tPaymentController.length : 0; i < tPayment.length; i++) {
-        tPaymentController.add(TextEditingController(
-          text: tPayment[i].amount == 0 ? null : tPayment[i].amount.toString(),
-        ));
-      }
     }
   }
 
@@ -92,9 +68,9 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
 
     updateTPaymentListView();
 
-    for (int i = tPaymentController.length < tPayment.length ? tPaymentController.length : 0; i < tPayment.length; i++) {
+    for (int i = tPaymentController.length < tPayment.tPayments.length ? tPaymentController.length : 0; i < tPayment.tPayments.length; i++) {
       tPaymentController.add(TextEditingController(
-        text: tPayment[i].amount == 0 ? null : tPayment[i].amount.toString(),
+        text: tPayment.tPayments[i].amount == 0 ? null : tPayment.tPayments[i].amount.toString(),
       ));
     }
 
@@ -102,11 +78,32 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
       padding: EdgeInsets.zero,
       child: Column(
         children: <Widget>[
+
+          Padding(
+            padding: const EdgeInsets.only(left: 15.0, top: 17.0, right: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //crossAxisAlignment: CrossAxisAlignment.start,
+              children: const <Widget>[
+
+               Text(
+                  'Tenant Fees',
+                  style: TextStyle(
+                    fontSize: 23.0,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+
+                AddPayment(indicator: 'T'),
+              ],
+            ),
+          ),
+
           Expanded(
             child: ListView.builder(
-              itemCount: tPayment.length + 1, // Add 1 for the ElevatedButton
+              itemCount: tPayment.tPayments.length, // Add 1 for the ElevatedButton
               itemBuilder: (BuildContext context, int position) {
-                if (position < tPayment.length) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
                     child: ListTile(
@@ -116,11 +113,11 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
                         style: Theme.of(context).textTheme.titleSmall,
                         onChanged: (value) {
                           setState(() {
-                            tPayment[position].amount = int.tryParse(value) ?? 0;
+                            tPayment.tPayments[position].amount = int.tryParse(value) ?? 0;
                           });
                         },
                         decoration: InputDecoration(
-                          labelText: tPayment[position].paymentName,
+                          labelText: tPayment.tPayments[position].paymentName,
                           labelStyle: Theme.of(context).textTheme.titleSmall,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
@@ -133,23 +130,19 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
                           IconButton(
                             icon: const Icon(Icons.edit),
                             onPressed: () {
-                              route(tPayment[position]);
+                              route(tPayment.tPayments[position]);
                             },
                           ),
                           IconButton(
                             icon: const Icon(Icons.delete),
                             onPressed: () {
-                              removeTPayment(tPayment[position]);
+                              tPayment.tPayments[position].removeTPayment(context);
                             },
                           ),
                         ],
                       ),
                     ),
                   );
-                } else {
-                  // Render the ElevatedButton as the last item
-                  return const AddPayment(indicator: 'T');
-                }
               },
             ),
           ),

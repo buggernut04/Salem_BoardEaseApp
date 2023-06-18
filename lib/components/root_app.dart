@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'homepage.dart';
-import 'payment_analysis.dart';
 import 'payment_setup.dart';
-import 'tenant_list.dart';
+import 'tenant_record.dart';
 
 class RootApp extends StatefulWidget {
   const RootApp({Key? key}) : super(key: key);
@@ -17,13 +16,13 @@ class _RootAppState extends State<RootApp> {
 
   List<Widget> options = const[
     MyHomePage(),
-    TenantList(),
-    Report(),
+    TenantRecord(),
     PaymentDetail(),
   ];
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: Center(
         child: options[_currentIndex]
@@ -34,8 +33,10 @@ class _RootAppState extends State<RootApp> {
 
   Widget getFooter() {
     return BottomNavigationBar(
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         currentIndex: _currentIndex,
-        backgroundColor: Colors.yellowAccent,
+        backgroundColor: Colors.white,
         selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.black.withOpacity(0.8),
         showSelectedLabels: true,
@@ -45,22 +46,17 @@ class _RootAppState extends State<RootApp> {
         },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              label: 'Home',
-              icon: Icon(Icons.home),
+              label: 'HOME',
+              icon: Icon(Icons.home,size: 30.0),
           ),
           BottomNavigationBarItem(
-              label: 'Tenants List',
-              icon: Icon(Icons.person_pin),
+              label: 'RECORDS',
+              icon: Icon(Icons.person_pin, size: 30.0),
               //backgroundColor: Colors.blue
           ),
           BottomNavigationBarItem(
-            label: 'Report',
-            icon: Icon(Icons.analytics_outlined),
-            //backgroundColor: Colors.blue,
-          ),
-          BottomNavigationBarItem(
-              label: 'Payment',
-              icon: Icon(Icons.payment),
+              label: 'PAYMENT',
+              icon: Icon(Icons.payment, size: 30.0),
               //backgroundColor: Colors.blue
           )
         ],

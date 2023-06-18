@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../classes/model/tenantpayment.dart';
-import '../database/databasehelper.dart';
 
 
 class EditDeleteTenantPayment extends StatefulWidget {
@@ -18,14 +17,6 @@ class _EditDeleteTenantPaymentState extends State<EditDeleteTenantPayment> {
   TextEditingController pName = TextEditingController();
   TextEditingController amount = TextEditingController();
 
-  void saveTPayment() async {
-    int? result;
-
-    result = await DatabaseHelper.databaseHelper.updateTPayment(widget.tenantPayment);
-
-    result != 0 ? debugPrint('Success') : debugPrint('Fail');
-  }
-
   @override
   Widget build(BuildContext context) {
 
@@ -39,7 +30,7 @@ class _EditDeleteTenantPaymentState extends State<EditDeleteTenantPayment> {
         backgroundColor: Colors.blue[300],
         elevation: 0.0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context, true);
           },
@@ -85,7 +76,7 @@ class _EditDeleteTenantPaymentState extends State<EditDeleteTenantPayment> {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                saveTPayment();
+                widget.tenantPayment.saveTPayment();
                 Navigator.of(context).pop(true);
               },
               child: const Text(
@@ -119,97 +110,4 @@ class _EditDeleteTenantPaymentState extends State<EditDeleteTenantPayment> {
       ),
     );
   }
-
-  Future openDialog() => showDialog(
-    context: context,
-    builder: (context) {
-
-      return Dialog(
-        child: SizedBox(
-          height: 300,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextField(
-                  controller: pName,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter Payment Name',
-                  ),
-                  onTap: (){
-                    setState(() {
-                      widget.tenantPayment.paymentName = pName.text;
-                    });
-                  },
-                ),
-              ),
-
-              const SizedBox(height: 10.0),
-
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: TextField(
-                  controller: amount,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter Amount',
-                  ),
-                  onTap: (){
-                    setState(() {
-                      widget.tenantPayment.amount = int.tryParse(amount.text) ?? 0;
-                    });
-                  },
-                ),
-              ),
-
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    saveTPayment();
-                    Navigator.of(context).pop(true);
-                  },
-                  child: const Text(
-                    'SAVE',
-                    textScaleFactor: 1.5,
-                    style: TextStyle(
-                      color: Colors.blue,
-                    ),
-                  ),
-                ),
-              ),
-
-              Container(
-                margin: const EdgeInsets.only(top: 1),
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                width: double.infinity,
-                child: Column(
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(false); // Close the dialog
-                      },
-                      child: const Text(
-                        'CANCEL',
-                        textScaleFactor: 1.5,
-                        style: TextStyle(
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
 }

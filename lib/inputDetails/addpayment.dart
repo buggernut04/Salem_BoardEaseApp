@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../classes/model/ownerpayment.dart';
+import '../for_future_use/ownerpayment.dart';
 import '../classes/model/tenantpayment.dart';
-import '../database/databasehelper.dart';
+
 
 
 class AddPayment extends StatefulWidget {
@@ -19,41 +19,23 @@ class _AddPaymentState extends State<AddPayment> {
   TextEditingController pName = TextEditingController();
   TextEditingController amount = TextEditingController();
 
-  void saveTPayment(TenantPayment tenantPayment) async {
-    int? result;
-
-    result = await DatabaseHelper.databaseHelper.insertTPayment(tenantPayment);
-
-    result != 0 ? debugPrint('Success') : debugPrint('Fail');
-  }
-
-  void saveWPayment(OwnerPayment ownerPayment) async {
+  /*void saveWPayment(OwnerPayment ownerPayment) async {
     int? result;
 
     result = await DatabaseHelper.databaseHelper.insertWPayment(ownerPayment);
 
     result != 0 ? debugPrint('Success') : debugPrint('Fail');
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white70,
-        ),
-        child: const Text(
-          'Add Payment',
-          textScaleFactor: 1.5,
-          style: TextStyle(
-            color: Colors.blue,
-          ),
-        ),
-        onPressed: () {
-          openDialog();
-        },
-      ),
+    return IconButton(
+      onPressed: (){
+       openDialog();
+      },
+      icon: const Icon(Icons.add),
+      iconSize: 30,
+      highlightColor: Colors.blue,
     );
   }
 
@@ -100,9 +82,12 @@ class _AddPaymentState extends State<AddPayment> {
                   onPressed: () {
 
                     if(widget.indicator == 'T'){
-                      saveTPayment(TenantPayment(id: null, paymentName: pName.text, amount: int.tryParse(amount.text) ?? 0, isPayed: 0));
+                      TenantPayment tPayment = TenantPayment(id: null, paymentName: pName.text, amount: int.tryParse(amount.text) ?? 0, isPayed: 0);
+                      tPayment.saveTPayment();
+
                     } else{
-                      saveWPayment(OwnerPayment(id: null, paymentName: pName.text, amount: int.tryParse(amount.text) ?? 0, datePayed: DateTime.now()));
+                      OwnerPayment wPayment = OwnerPayment(id: null, paymentName: pName.text, amount: int.tryParse(amount.text) ?? 0, datePayed: DateTime.now());
+                      wPayment.saveWPayment();
                     }
 
                     Navigator.of(context).pop(true); // Close the dialog

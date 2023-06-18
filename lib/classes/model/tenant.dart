@@ -51,6 +51,32 @@ class Tenant{
     }
   }
 
+  String getStatus(){
+    if(status == 1){
+      return 'Payed';
+    }
+    else if(status == 2){
+      return 'Not Fully Payed';
+    }
+    else{
+      return 'Not Payed';
+    }
+  }
+
+  // every status has its own color
+  Color getStatusColor(){
+    if(status == 1){
+      return Colors.yellow;
+    }
+    else if(status == 2){
+      return Colors.greenAccent;
+    }
+    else{
+      return Colors.red;
+    }
+  }
+
+
   // save the tenant to the database
   void saveTenant() async {
     int? result;

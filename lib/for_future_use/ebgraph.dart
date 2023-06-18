@@ -1,20 +1,22 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import '../bar_data.dart';
 
 
-class WaterBillGraph extends StatelessWidget {
+class ElectricBillGraph extends StatelessWidget {
   final List monthlyPayments;
 
-  const WaterBillGraph({
+  const ElectricBillGraph({
     super.key,
     required this.monthlyPayments,
   });
 
 
   final double maxY = 3000;
-  /*final double janAmount;
+  */
+/*final double janAmount;
   final double febAmount;
   final double marAmount;
   final double aprAmount;
@@ -26,8 +28,10 @@ class WaterBillGraph extends StatelessWidget {
   final double octAmount;
   final double novAmount;
   final double decAmount;
-*/
-  /*const WaterBillGraph(
+*//*
+
+  */
+/*const WaterBillGraph(
       {super.key,
         janA janAmount,
         required this.febAmount,
@@ -40,69 +44,70 @@ class WaterBillGraph extends StatelessWidget {
         required this.sepAmount,
         required this.octAmount,
         required this.novAmount,
-        required this.decAmount,});*/
+        required this.decAmount,});*//*
+
 
   @override
   Widget build(BuildContext context) {
     BarData monthlyPayment = BarData(
-      janAmount: monthlyPayments[0],
-      febAmount: monthlyPayments[1],
-      marAmount: monthlyPayments[2],
-      aprAmount: monthlyPayments[3],
-      mayAmount: monthlyPayments[4],
-      junAmount: monthlyPayments[5],
-      julAmount: monthlyPayments[6],
-      augAmount: monthlyPayments[7],
-      sepAmount: monthlyPayments[8],
-      octAmount: monthlyPayments[9],
-      novAmount: monthlyPayments[10],
-      decAmount: monthlyPayments[11]
+        janAmount: monthlyPayments[0],
+        febAmount: monthlyPayments[1],
+        marAmount: monthlyPayments[2],
+        aprAmount: monthlyPayments[3],
+        mayAmount: monthlyPayments[4],
+        junAmount: monthlyPayments[5],
+        julAmount: monthlyPayments[6],
+        augAmount: monthlyPayments[7],
+        sepAmount: monthlyPayments[8],
+        octAmount: monthlyPayments[9],
+        novAmount: monthlyPayments[10],
+        decAmount: monthlyPayments[11]
     );
     monthlyPayment.initializeBarData();
     return Padding(
       padding: const EdgeInsets.only(top: 5.0),
       child: BarChart(
-            BarChartData(
-              barTouchData: BarTouchData(
-                  touchTooltipData: BarTouchTooltipData(
-                    tooltipBgColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.8),
-                    fitInsideVertically: true,
-                  )
-              ),
-        maxY: maxY,
-        minY: 0,
-        gridData: FlGridData(
-          show: false,
-        ),
-        borderData: FlBorderData(
-          show: false,
-        ),
-        titlesData: FlTitlesData(
-          show: true,
-          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: getBottomTitles,
-              )),
-        ),
-        barGroups: monthlyPayment.barData
-            .map((data) => BarChartGroupData(x: data.x, barRods: [
-          BarChartRodData(
-              toY: data.y,
-              color: Colors.blue.shade500.withOpacity(0.9),
-              width: 20,
-              borderRadius: BorderRadius.circular(7),
-              backDrawRodData: BackgroundBarChartRodData(
-                show: true,
-                //toY: ,
-                color: Colors.blue.shade100,
-              )),
-        ]))
-            .toList(),
-      )),
+          BarChartData(
+            barTouchData: BarTouchData(
+                touchTooltipData: BarTouchTooltipData(
+                  tooltipBgColor: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.8),
+                  fitInsideVertically: true,
+                )
+            ),
+            maxY: maxY,
+            minY: 0,
+            gridData: FlGridData(
+              show: false,
+            ),
+            borderData: FlBorderData(
+              show: false,
+            ),
+            titlesData: FlTitlesData(
+              show: true,
+              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    getTitlesWidget: getBottomTitles,
+                  )),
+            ),
+            barGroups: monthlyPayment.barData
+                .map((data) => BarChartGroupData(x: data.x, barRods: [
+              BarChartRodData(
+                  toY: data.y,
+                  color: Colors.blue.shade500.withOpacity(0.9),
+                  width: 20,
+                  borderRadius: BorderRadius.circular(7),
+                  backDrawRodData: BackgroundBarChartRodData(
+                    show: true,
+                    //toY: ,
+                    color: Colors.blue.shade100,
+                  )),
+            ]))
+                .toList(),
+          )),
     );
   }
 
@@ -154,4 +159,4 @@ class WaterBillGraph extends StatelessWidget {
     }
     return SideTitleWidget(axisSide: meta.axisSide, child: text);
   }
-}
+}*/

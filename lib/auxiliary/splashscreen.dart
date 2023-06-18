@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -18,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   startTimer() {
-    var duration = const Duration(seconds: 7);
+    var duration = const Duration(seconds: 6);
     return Timer(duration, route);
   }
 
@@ -42,11 +41,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Widget content(){
     return Padding(
-      padding: const EdgeInsets.only(left: 1),
+      padding: const EdgeInsets.only(left: 60),
       child: Center(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
 
             Image.asset(
