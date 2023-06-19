@@ -1,3 +1,4 @@
+/*
 import 'ownerpayment.dart';
 
 class WPaymentList{
@@ -7,4 +8,4 @@ class WPaymentList{
   WPaymentList({required this.wPayments});
 
 
-}
+}*/

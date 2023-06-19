@@ -1,3 +1,4 @@
+/*
 import 'package:boardease_application/classes/model/payment.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -39,4 +40,4 @@ class OwnerPayment extends Payment{
     amount: json['amount'],
     datePayed: DateTime.parse(json['datePayed']),
   );
-}
+}*/

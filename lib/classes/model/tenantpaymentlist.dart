@@ -6,4 +6,10 @@ class TPaymentList{
 
   TPaymentList({required this.tPayments});
 
+  bool checkIfPaymentNameExists(String name) {
+    String lowerCaseName = name.toLowerCase();
+
+    return tPayments.any((tPayment) => tPayment.paymentName.toLowerCase() == lowerCaseName);
+  }
+
 }

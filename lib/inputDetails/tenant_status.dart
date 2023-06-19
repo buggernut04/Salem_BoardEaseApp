@@ -1,3 +1,4 @@
+import 'package:boardease_application/notification_service/popup_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
@@ -21,7 +22,9 @@ class _TenantStatusState extends State<TenantStatus> {
   TextEditingController currentDateController = TextEditingController();
   int indicator = 0;
 
-  final _paymentStatus = ['Payed', 'Not Payed'];
+  bool isPressed = false;
+
+  final _paymentStatus = ['Paid', 'Not Paid'];
 
   @override
   void initState() {
@@ -69,6 +72,8 @@ class _TenantStatusState extends State<TenantStatus> {
         indicator++;
       }
     }
+
+    debugPrint('$indicator');
     indicator == widget.tenant.tenantPayment.length? widget.tenant.status = 1 : indicator == 0 ? widget.tenant.status = 3 : widget.tenant.status = 2;
 
     widget.tenant.updateStatusAndDate();
@@ -83,73 +88,142 @@ class _TenantStatusState extends State<TenantStatus> {
 
     initializeToInputPaymentStatus();
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            (widget.tenant.name),
-            style: const TextStyle(fontSize: 23),
-          ),
-          centerTitle: true,
+    return WillPopScope(
+      onWillPop: () async {
+        if (isPressed) {
+          PopUpNotification.cancelInfo(context);
+          return false;
+        } else {
+          return true;
+        }
+      },
+      child: Scaffold(
           backgroundColor: Colors.blue[300],
-          elevation: 0.0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context, false);
-            },
+          appBar: AppBar(
+            title: const Text(
+              'BoardEase',
+              style: TextStyle(
+                fontSize: 25,
+                color: Colors.black54,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.5,
+              ),
+            ),
+            centerTitle: true,
+            backgroundColor: Colors.blue[300],
+            elevation: 1.0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_ios),
+              onPressed: () {
+                if(isPressed){
+                  PopUpNotification.cancelInfo(context);
+                } else{
+                  Navigator.pop(context, false);
+                }
+              },
+            ),
           ),
-        ),
-        body: Container(
-          padding: const EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-
-              Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Text(
-                  'Valid Until',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.only(bottom: 15.0),
-                child: TextField(
-                  controller: currentDateController,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0)
-                      )
-                  ),
-                  enabled: false,
+          body: Container(
+            width: double.infinity,
+            decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
                 )
-              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
 
-              Expanded(
-                  child: ListView.builder(
-                        itemCount: widget.tenant.tenantPayment.length  + 1,
-                        itemBuilder: (BuildContext context, int position){
+                Padding(
+                  padding: const EdgeInsets.only(left: 15.0, top: 20.0, right: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
 
-                          if(position < widget.tenant.tenantPayment.length) {
-                            return Column(
-                              children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          widget.tenant.name,
+                          style: const TextStyle(
+                            fontSize: 23.0,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
 
-                                Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Text(
-                                    (widget.tenant.tenantPayment[position]
-                                        .paymentName),
-                                    style: Theme
-                                        .of(context)
-                                        .textTheme
-                                        .titleMedium,
+                     Text(
+                        widget.tenant.getStatus(),
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w500,
+                          fontStyle: FontStyle.italic,
+                          color: widget.tenant.getStatusColor(),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Divider(thickness: 8.0,),
+
+                Center(
+                  child: Text(
+                    'PAYMENT IS UNTIL',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 5.0),
+                  child: TextField(
+                    controller: currentDateController,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 19.0,
+                      fontWeight: FontWeight.w600
+                    ),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide.none,
+
+                        )
+                    ),
+                    enabled: false,
+                  )
+                ),
+
+                const Divider(thickness: 8.0,),
+
+                Expanded(
+                    child: ListView.builder(
+                          itemCount: widget.tenant.tenantPayment.length  + 1,
+                          itemBuilder: (BuildContext context, int position){
+
+                            if(position < widget.tenant.tenantPayment.length) {
+                              return Column(
+                                children: <Widget>[
+
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 10.0),
+                                    child: Text(
+                                      (widget.tenant.tenantPayment[position]
+                                          .paymentName),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0,
+                                        color: Colors.indigo
+                                      ),
+                                    ),
                                   ),
-                                ),
 
-                                Card(
-                                  child: ListTile(
+                                  ListTile(
                                     title: DropdownButton(
                                       items: _paymentStatus.map((
                                           String dropDownStringItem) =>
@@ -165,6 +239,8 @@ class _TenantStatusState extends State<TenantStatus> {
                                           pValues[position] = newValue;
                                           widget.tenant.tenantPayment[position]
                                               .isPayed = updateStatus(newValue);
+
+                                          isPressed = true;
                                         });
                                       },
                                       dropdownColor: Colors.white,
@@ -173,63 +249,69 @@ class _TenantStatusState extends State<TenantStatus> {
                                       isExpanded: true,
                                       style: const TextStyle(
                                         color: Colors.black,
-                                        fontSize: 20,
+                                        fontSize: 19,
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            );
-                          } else {
-                              return Padding(
-                                padding: const EdgeInsets.only(top: 13.0, bottom: 13.0),
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(foregroundColor: Colors.white70
-                                          ),
-                                          onPressed: widget.tenant.status == 1 ? null : () {
-                                            saveTenantStatus();
-                                            Navigator.pop(context, true);
-                                          },
-                                          child: const Text(
-                                            'Save',
-                                            textScaleFactor: 1.5,
-                                            style: TextStyle(
-                                                color: Colors.blue
-                                            ),
-                                          ),
-                                        )
-                                    ),
 
-                                    Container(width: 8.0,),
-
-                                    Expanded(
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(foregroundColor: Colors.white70),
-                                          child: const Text(
-                                            'Cancel' ,
-                                            textScaleFactor: 1.5,
-                                            style: TextStyle(
-                                                color: Colors.blue
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pop(context, false);
-                                          },
-                                        )
-                                    )
-                                  ],
-                                ),
+                                  const Divider(thickness: 3.0,),
+                                ],
                               );
+                            } else {
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 13.0, bottom: 13.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(foregroundColor: Colors.white70
+                                            ),
+                                            onPressed: widget.tenant.status == 1 || !isPressed ? null : () {
+                                              saveTenantStatus();
+                                              PopUpNotification.saveInfo(context, 3);
+                                            },
+                                            child: const Text(
+                                              'Save',
+                                              textScaleFactor: 1.5,
+                                              style: TextStyle(
+                                                  color: Colors.blue
+                                              ),
+                                            ),
+                                          )
+                                      ),
+
+                                      Container(width: 8.0,),
+
+                                      Expanded(
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(foregroundColor: Colors.white70),
+                                            child: const Text(
+                                              'Cancel' ,
+                                              textScaleFactor: 1.5,
+                                              style: TextStyle(
+                                                  color: Colors.blue
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              if(isPressed){
+                                                PopUpNotification.cancelInfo(context);
+                                              } else{
+                                                Navigator.pop(context,false);
+                                              }
+                                            },
+                                          )
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }
                             }
-                          }
-                        )
-                  ),
-            ],
-          ),
-        )
+                          )
+                    ),
+              ],
+            ),
+          )
+      ),
     );
   }
 
@@ -240,6 +322,6 @@ class _TenantStatusState extends State<TenantStatus> {
   }
 
   int updateStatus(String? value){
-    return value == 'Payed' ? 1 : 0;
+    return value == 'Paid' ? 1 : 0;
   }
 }

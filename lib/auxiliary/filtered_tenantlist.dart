@@ -18,7 +18,6 @@ class FilteredTenantList extends StatefulWidget {
 
 class _FilteredTenantListState extends State<FilteredTenantList> {
 
-
   void routeToTenantStatus(Tenant tenant) async {
     bool result = await Navigator.push(
         context,

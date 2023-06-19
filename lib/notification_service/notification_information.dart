@@ -11,7 +11,7 @@ import 'notification_api.dart';
 
     await NotificationService.showNotification(
       title: 'BoardEase Important Notification',
-      body: 'Click to see ${tenantWithNearestDate.name}',
+      body: 'There are information about your tenants!!!',
       payload: {
         "navigate": "true",
       },
@@ -27,26 +27,26 @@ import 'notification_api.dart';
     );
   }
 
-Future<void> getTenantNotificationWhenDue(Tenant tenantWithNearestDate) async {
-  debugPrint("Ive been here");
+  Future<void> getTenantNotificationWhenDue(Tenant tenantWithNearestDate) async {
+    debugPrint("Ive been here");
 
-  await NotificationService.showNotification(
-    title: 'BoardEase Important Notification',
-    body: 'Click to see ${tenantWithNearestDate.name}',
-    payload: {
-      "navigate": "true",
-    },
-    notificationCalendar: (tenantWithNearestDate.currentDate.month <= DateTime.now().month && tenantWithNearestDate.currentDate.day < DateTime.now().day) ? DateTime.now() : tenantWithNearestDate.currentDate,
-    actionButtons: [
-      NotificationActionButton(
-        key: 'check',
-        label: 'Check it out',
-        color: Colors.blue,
-      )
-    ],
-    scheduled: true,
-  );
-}
+    await NotificationService.showNotification(
+      title: 'BoardEase Important Notification',
+      body: 'Click to see ${tenantWithNearestDate.name}',
+      payload: {
+        "navigate": "true",
+      },
+      notificationCalendar: (tenantWithNearestDate.currentDate.month <= DateTime.now().month && tenantWithNearestDate.currentDate.day < DateTime.now().day) ? DateTime.now() : tenantWithNearestDate.currentDate,
+      actionButtons: [
+        NotificationActionButton(
+          key: 'check',
+          label: 'Check it out',
+          color: Colors.blue,
+        )
+      ],
+      scheduled: true,
+    );
+  }
 
   Future<void> cancelAllNotifications() async {
     await AwesomeNotifications().cancelAllSchedules();

@@ -33,7 +33,7 @@ class _RootAppState extends State<RootApp> {
 
   Widget getFooter() {
     return BottomNavigationBar(
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
         currentIndex: _currentIndex,
         backgroundColor: Colors.white,

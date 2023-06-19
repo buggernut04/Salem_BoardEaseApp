@@ -1,3 +1,4 @@
+/*
 import 'package:boardease_application/for_future_use/ownerpaymentlist.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
@@ -263,3 +264,4 @@ class _OwnerPaymentWidgetState extends State<OwnerPaymentWidget> {
     );
   }
 }
+*/

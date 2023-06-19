@@ -1,5 +1,7 @@
 import 'package:boardease_application/auxiliary/filtered_tenantlist.dart';
+import 'package:boardease_application/classes/model/notification_body.dart';
 import 'package:boardease_application/classes/model/tenantlist.dart';
+import 'package:boardease_application/notification_service/popup_notification.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 //import '../auxiliary/dotindicator.dart';
@@ -7,6 +9,7 @@ import '../auxiliary/dotindicator.dart';
 import '../auxiliary/homeview.dart';
 import '../classes/model/tenant.dart';
 import '../database/databasehelper.dart';
+import '../notification_service/notifications.dart';
 
 class MyHomePage extends StatefulWidget    {
   const MyHomePage({Key? key}) : super(key: key);
@@ -20,6 +23,8 @@ class _MyHomePageState extends State<MyHomePage> {
   TenantList tenantsList = TenantList(tenant: []);
   int currentIndex = 0;
 
+  bool isPressed = false;
+
   void getAllTenants(){
     final Future<Database> dbFuture = DatabaseHelper.databaseHelper.initializeDatabase();
 
@@ -29,6 +34,15 @@ class _MyHomePageState extends State<MyHomePage> {
         if(mounted) {
           setState(() {
             tenantsList.tenant = tenants;
+
+            if(tenantsList.getTenantsDueInThreeDays().isNotEmpty){
+              NotificationBody body1 = NotificationBody(body: 'There are/is ${tenantsList.getTenantsDueInThreeDays().length} due among your tenants in three days.', timeCreated: DateTime.now());
+              body1.saveNotification();
+            }
+            if(tenantsList.getTenantsDueToday().isNotEmpty){
+              NotificationBody body2 = NotificationBody(body: 'There are/is ${tenantsList.getTenantsDueToday().length} due among your tenants today.', timeCreated: DateTime.now());
+              body2.saveNotification();
+            }
           });
         }
       });
@@ -64,7 +78,6 @@ class _MyHomePageState extends State<MyHomePage> {
             elevation: 1.0,
           ),
           body: Container(
-            //height: 800,
             width: double.infinity,
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -80,7 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: const EdgeInsets.only(left: 15.0, top: 20.0, right: 8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
 
                       const Text(
@@ -96,12 +108,26 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: <Widget>[
 
                           IconButton(
-                            onPressed: (){},
-                            icon: tenantsList.setIcon(),
+                            onPressed: (){
+
+                              setState(() {
+                                isPressed = true;
+                              });
+
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) {
+                                    return const Notifications();
+                                  })
+                              );
+                            },
+                            icon: isPressed ? const Icon(Icons.notifications_none) : tenantsList.setIcon(),
                           ),
 
                           IconButton(
-                            onPressed: (){},
+                            onPressed: (){
+                              PopUpNotification.appInfo(context);
+                            },
                             icon: const Icon(Icons.info_outline),
                           ),
                         ],

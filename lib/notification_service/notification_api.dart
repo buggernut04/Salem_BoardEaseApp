@@ -16,7 +16,7 @@ class NotificationService {
           channelName: 'BoardEase App',
           channelDescription: 'Notification channel for basic tests',
           channelGroupKey: 'high_importance_channel',
-          defaultColor: const Color(0xFF153CDA),
+          defaultColor: const Color(0xFF4E66D2),
           ledColor: Colors.white,
           importance: NotificationImportance.Max,
           channelShowBadge: true,
@@ -120,12 +120,11 @@ class NotificationService {
         wakeUpScreen: true,
       ),
       actionButtons: actionButtons,
-      //notificationCalendar: notificationCalendar,
       schedule: scheduled
           ? NotificationCalendar(
         // For testing is in here
-        month: notificationCalendar.month,
-        day: notificationCalendar.day,
+        //month: notificationCalendar.month,
+        //day: notificationCalendar.day,
         //hour: notificationCalendar.hour,
         //minute: notificationCalendar.minute,
         second: notificationCalendar.second,
@@ -133,24 +132,8 @@ class NotificationService {
         timeZone:
           await AwesomeNotifications().getLocalTimeZoneIdentifier(),
         preciseAlarm: true,
-      )
-          : null,
-      /*schedule: scheduled
-          ? NotificationInterval(
-        interval: interval,
-        timeZone:
-        await AwesomeNotifications().getLocalTimeZoneIdentifier(),
-        preciseAlarm: true,
-      )
-          : null,*/
-      /*NotificationCalendar(
-          *//*hour: 14,
-          minute: 59,*//*
-          minute: 2,
-          second: 10,
-          millisecond: 0,
-          repeats: false,
-      ),*/
+        //repeats: true,
+      ) : null,
     );
   }
 }

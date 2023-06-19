@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:boardease_application/classes/model/tenantpayment.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../database/databasehelper.dart';
@@ -53,26 +52,38 @@ class Tenant{
 
   String getStatus(){
     if(status == 1){
-      return 'Payed';
+      return 'Paid';
     }
     else if(status == 2){
-      return 'Not Fully Payed';
+      return 'Not Fully Paid';
     }
     else{
-      return 'Not Payed';
+      return 'Not Paid';
     }
   }
 
   // every status has its own color
-  Color getStatusColor(){
+  Color? getStatusColor(){
     if(status == 1){
-      return Colors.yellow;
+      return Colors.yellow[700];
     }
     else if(status == 2){
       return Colors.greenAccent;
     }
     else{
       return Colors.red;
+    }
+  }
+
+  ImageProvider? getStatusImage(){
+    if(status == 1){
+      return const AssetImage('assets/paid.jpg');
+    }
+    else if(status == 2){
+      return const AssetImage('assets/not_fully.jpg');
+    }
+    else{
+      return const AssetImage('assets/not_paid.jpg');
     }
   }
 
@@ -94,19 +105,10 @@ class Tenant{
     result != 0 ? print('Success') : print('Fail');
   }
 
-  // remove a tenant
-  // improve
-  void removeTenant(BuildContext context) async {
+  void removeTenant() async {
     int? result = await DatabaseHelper.databaseHelper.deleteTenant(id);
 
-    if(result != 0){
-      showSnackBar(context, 'Tenant Removed');
-    }
-  }
-
-  void showSnackBar(BuildContext context, String message){
-    final snackBar = SnackBar(content: Text(message));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    result != 0 ? print('Success') : print('Fail');
   }
 
   // Convert a Tenant object into a Map Object

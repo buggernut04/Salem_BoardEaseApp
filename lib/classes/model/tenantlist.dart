@@ -1,7 +1,7 @@
 import 'package:boardease_application/classes/model/tenant.dart';
 import 'package:flutter/material.dart';
 
-import '../../notification_service/notification_body.dart';
+import '../../notification_service/notification_information.dart';
 
 class TenantList{
 
@@ -25,7 +25,11 @@ class TenantList{
     return tenant.where((tenant) => tenant.isPaymentDueThreeDays() == true).toList();
   }
 
-  int getTenantsDueToday(){
+  List<Tenant> getTenantsDueToday(){
+    return tenant.where((tenant) => tenant.isPaymentDue() == true).toList();
+  }
+
+  int getTenantsNumDueToday(){
     int count = 0;
 
     for (var tenants in tenant) {
@@ -52,7 +56,7 @@ class TenantList{
 
   Icon setIcon(){
     //debugPrint('${(getTenantsDueToday())}');
-    return getTenantsDueInThreeDays().isNotEmpty ||  getTenantsDueToday() != 0 ? const Icon(Icons.notifications_active, color: Colors.red) : const Icon(Icons.notifications_none);
+    return getTenantsDueInThreeDays().isNotEmpty ||  getTenantsNumDueToday() != 0 ? const Icon(Icons.notifications_active, color: Colors.red) : const Icon(Icons.notifications_none);
   }
 
 

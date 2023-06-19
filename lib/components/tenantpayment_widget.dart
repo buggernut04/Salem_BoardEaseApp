@@ -1,6 +1,8 @@
 import 'package:boardease_application/classes/model/tenantpaymentlist.dart';
-import 'package:boardease_application/inputDetails/editdeletetenantpayment.dart';
+import 'package:boardease_application/inputDetails/edittenantpayment.dart';
+import 'package:boardease_application/notification_service/popup_notification.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../database/databasehelper.dart';
@@ -32,7 +34,7 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
             if (tPayment.tPayments.isEmpty) {
               TenantPayment tPayment = TenantPayment(id: null,
                   paymentName: 'Rental Fee',
-                  amount: null,
+                  amount: 0,
                   isPayed: 0);
 
               tPayment.saveTPayment();
@@ -68,12 +70,6 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
 
     updateTPaymentListView();
 
-    for (int i = tPaymentController.length < tPayment.tPayments.length ? tPaymentController.length : 0; i < tPayment.tPayments.length; i++) {
-      tPaymentController.add(TextEditingController(
-        text: tPayment.tPayments[i].amount == 0 ? null : tPayment.tPayments[i].amount.toString(),
-      ));
-    }
-
     return Container(
       padding: EdgeInsets.zero,
       child: Column(
@@ -84,9 +80,9 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               //crossAxisAlignment: CrossAxisAlignment.start,
-              children: const <Widget>[
+              children: <Widget>[
 
-               Text(
+                const Text(
                   'Tenant Fees',
                   style: TextStyle(
                     fontSize: 23.0,
@@ -95,7 +91,7 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
                   ),
                 ),
 
-                AddPayment(indicator: 'T'),
+               AddPayment(tPaymentList: tPayment),
               ],
             ),
           ),
@@ -105,41 +101,41 @@ class _TenantPaymentWidgetState extends State<TenantPaymentWidget> {
               itemCount: tPayment.tPayments.length, // Add 1 for the ElevatedButton
               itemBuilder: (BuildContext context, int position) {
                   return Padding(
-                    padding: const EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
-                    child: ListTile(
-                      title: TextField(
-                        controller: tPaymentController[position],
-                        enabled: false,
-                        style: Theme.of(context).textTheme.titleSmall,
-                        onChanged: (value) {
-                          setState(() {
-                            tPayment.tPayments[position].amount = int.tryParse(value) ?? 0;
-                          });
-                        },
-                        decoration: InputDecoration(
-                          labelText: tPayment.tPayments[position].paymentName,
-                          labelStyle: Theme.of(context).textTheme.titleSmall,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
+                    padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                    child: Card(
+                      child: ListTile(
+                        title: Text(
+                          tPayment.tPayments[position].paymentName,
+                            style: const TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.black,
+                            )
                         ),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              route(tPayment.tPayments[position]);
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete),
-                            onPressed: () {
-                              tPayment.tPayments[position].removeTPayment(context);
-                            },
-                          ),
-                        ],
+                        subtitle: Text(
+                            NumberFormat.currency(symbol: '₱').format( tPayment.tPayments[position].amount),
+                            style: const TextStyle(
+                              fontSize: 15.0,
+                              color: Colors.black,
+                            )
+                        ),
+                        leading: const Icon(Icons.payment_rounded,color: Colors.black,),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: position != 0 ? const Icon(Icons.edit,color: Colors.black54,) : const SizedBox(),
+                              onPressed: () {
+                                route(tPayment.tPayments[position]);
+                              },
+                            ),
+                            IconButton(
+                              icon: position != 0 ? const Icon(Icons.delete,color: Colors.redAccent) : const Icon(Icons.edit,color: Colors.black54,),
+                              onPressed:(){
+                                position != 0 ? PopUpNotification.removePaymentInfo(context, tPayment.tPayments[position]) : route(tPayment.tPayments[position]);
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
